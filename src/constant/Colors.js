@@ -1,0 +1,37 @@
+export const Colors = {
+    white: "#ffffff",
+    background_shade: "#e8e5f4",
+    purple: "#6e46c0",
+    lightpurple: "#ddd7f9",
+
+    blue_old: '#16a0d5',       //old blue
+    blue: '#0e148b',       //new blue   
+    red_old: '#e0446c',
+    black: '#222',
+    grey: '#979797',
+    lightGrey: '#ccc',
+    shade: '#F9FAFC',
+    greyText: '#070C18',
+    greylightText: '#545a77',
+    green: '#4DD637',
+    green2: "#7db343",
+    facebook: '#4267B2',
+    disableText: "#bbc2dc",
+    disableBackGround: "#e7ebfb",
+    msgReciver: "#e7ebfb",
+    noteBackground: "#f6f8fd",
+    noteBorder: "#ebedf2",
+    grayf5: "#f5f5f5",
+    yellow: "#e9a52d",
+    yellow2: "#f8b739",
+    violet: "#561b8b",
+    textinput_inner_text: "#848689",
+    disable_textinput_border: "#F5F2F2",
+    disable_textinput_background: "#FAFAFA",
+    boxBorder: "#E5E5E5",
+    green_new: "#179669",
+    green_new_2: "#0AA66E",
+    borderColor: "#9CA3AC",
+    backgroundBlack: "#5E6A7C",
+    financeBack: '#95A9AF'
+}

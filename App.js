@@ -1,19 +1,11 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 import React from 'react';
+import Stack_navigation from './src/routes/Stack_navigation';
 
 const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-      <Text>DFVFVDV</Text>
-    </View>
+    <Stack_navigation />
   );
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  main:{
-    
-  }
-});

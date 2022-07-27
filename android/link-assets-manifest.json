@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Outfit-Bold.ttf",
+      "sha1": "98054af253c6e858d9ec035166ac7a00c1a197e6"
+    },
+    {
+      "path": "assets/fonts/Outfit-Medium.ttf",
+      "sha1": "c935c6408aea96cce77b20fb046041cff2e470b7"
+    },
+    {
+      "path": "assets/fonts/Outfit-Regular.ttf",
+      "sha1": "335905736a2c79eefdcc8e20bf756ea589074d18"
+    },
+    {
+      "path": "assets/fonts/Outfit-SemiBold.ttf",
+      "sha1": "828d76f5963c31e34e0981a4c707b34c5b8a399b"
+    }
+  ]
+}
