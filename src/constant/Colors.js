@@ -6,7 +6,7 @@ export const Colors = {
 
     blue_old: '#16a0d5',       //old blue
     blue: '#0e148b',       //new blue   
-    red_old: '#e0446c',
+    red: '#DD0004',
     black: '#222',
     grey: '#979797',
     lightGrey: '#ccc',
