@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import { Colors } from "./Colors";
 import { Normalize } from "./for_responsive/Dimens";
+import { few_constants } from "./small_constant/Few_Constants";
 
 export const globalStyles = StyleSheet.create({
     mainContainer: {
@@ -8,7 +9,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: Colors.background_shade,
         paddingHorizontal: Normalize(15)
     },
-      mainContainer_withoutpadding: {
+    mainContainer_withoutpadding: {
         flex: 1,
         backgroundColor: Colors.background_shade,
     },
@@ -48,12 +49,13 @@ export const globalStyles = StyleSheet.create({
         fontFamily: "Outfit-Medium",
         fontSize: Normalize(12),
         color: Colors.purple,
-        flex:1
+        flex: 1
     },
-    planeText_outfit_Medium:{
+    planeText_outfit_Medium: {
         fontSize: Normalize(13), fontFamily: "Outfit-Medium", color: Colors.white
     },
-    planeText_outfit_bold:{ fontSize: Normalize(15), fontFamily: "Outfit-SemiBold", color: Colors.white },
+    planeText_outfit_bold: { fontSize: Normalize(15), fontFamily: "Outfit-SemiBold", color: Colors.white },
+    topicHeading: { fontSize: Normalize(15), fontFamily: "Outfit-SemiBold", color: Colors.blue, paddingVertical: few_constants.paddingHorizantal },
 
 
 

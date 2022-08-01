@@ -1,20 +1,22 @@
 export const Colors = {
     white: "#ffffff",
     background_shade: "#e8e5f4",
+    background_shade2: "#e6dff4",
     purple: "#6e46c0",
     lightpurple: "#ddd7f9",
+    lightpurple2: "#af99dc",
 
     blue_old: '#16a0d5',       //old blue
     blue: '#0e148b',       //new blue   
-    red: '#DD0004',
+    red: "#bf0c09",
     black: '#222',
     grey: '#979797',
     lightGrey: '#ccc',
     shade: '#F9FAFC',
     greyText: '#070C18',
     greylightText: '#545a77',
-    green: '#4DD637',
-    green2: "#7db343",
+    green: "#179669",
+    green2: "#296e01",
     facebook: '#4267B2',
     disableText: "#bbc2dc",
     disableBackGround: "#e7ebfb",
@@ -29,8 +31,6 @@ export const Colors = {
     disable_textinput_border: "#F5F2F2",
     disable_textinput_background: "#FAFAFA",
     boxBorder: "#E5E5E5",
-    green_new: "#179669",
-    green_new_2: "#0AA66E",
     borderColor: "#9CA3AC",
     backgroundBlack: "#5E6A7C",
     financeBack: '#95A9AF'

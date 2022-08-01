@@ -10,7 +10,7 @@ import { addComma } from '../../../helper/AddComma'
 import { useNavigation } from '@react-navigation/native'
 export default function Home() {
 
-  const navigation=useNavigation()
+  const navigation = useNavigation()
 
   const Home_header = () => {
     return (<View style={{ height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }} >
@@ -64,30 +64,62 @@ export default function Home() {
 
   }
 
-  const Ticket_card = () => {
+  const Ticket_card = ({ item }) => {
     return (
-
       <View style={{ height: Normalize(80), width: "99%", alignSelf: "center", backgroundColor: Colors.lightpurple, marginTop: Normalize(10), elevation: Normalize(2), borderRadius: Normalize(8), padding: Normalize(5) }} >
         <View style={{ flex: 1, flexDirection: "row", }} >
-          <View style={{ height: "100%", width: "35%", borderRadius: Normalize(10), backgroundColor: "#e6dff4", overflow: "hidden", elevation: 0.8 }} >
+          <View style={{ height: "100%", width: "35%", borderRadius: Normalize(10), backgroundColor:Colors.background_shade2, overflow: "hidden", elevation: 0.8 }} >
             <Image source={images.ticket} style={{ height: "100%", width: "100%", resizeMode: "contain" }} />
           </View>
           <View style={{ flex: 1, paddingHorizontal: Normalize(8) }} >
             <Text style={{ fontSize: Normalize(13), fontFamily: "Outfit-SemiBold", color: Colors.blue }} >5 Series Ticktes</Text>
-            <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color: "#bf0c09", paddingTop: Normalize(2) }} >Open upto 10pm</Text>
+            {/* <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color:Colors.blue, paddingTop: Normalize(2) }} >Price: <Text style={{color:Colors.red}} >$ 1200</Text></Text> */}
+            <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color: Colors.red, paddingTop: Normalize(2), letterSpacing: 0.5 }} >Closing Time : <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: Normalize(11.5) }} >{item.closing}</Text></Text>
             <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: Normalize(6) }} >
               <TouchableOpacity
-              onPress={()=>navigation.navigate("AllTickets_Page")}
-              style={{ height: "70%", width: "80%", alignItems: "center", justifyContent: "center", alignSelf: "flex-end", backgroundColor: Colors.green_new, borderRadius: Normalize(20), elevation: Normalize(2) }} >
+                onPress={() => navigation.navigate("AllTickets_Page")}
+                style={{ height: "75%", width: "80%", alignItems: "center", justifyContent: "center", alignSelf: "flex-end", backgroundColor: Colors.green, borderRadius: Normalize(20), elevation: Normalize(2) }} >
                 <Text style={{ color: Colors.white, fontSize: Normalize(11), fontFamily: "Outfit-Medium", letterSpacing: 0.7 }} >See All Tickets</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+        <View style={{ backgroundColor: Colors.purple, padding: Normalize(5), position: "absolute", top: Normalize(3), left: Normalize(3), borderRadius: Normalize(5), elevation: Normalize(1) }} >
+          <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(8) }} >{few_constants.rupee} <Text style={{ letterSpacing: 0.5 }} >{addComma(item.price)}</Text></Text>
+        </View>
       </View>
 
     )
   }
+
+  const data = [
+    {
+      price: 30,
+      closing: "12 am"
+    }, {
+      price: 60,
+      closing: "1 pm"
+    }, {
+      price: 120,
+      closing: "11 am"
+    }, {
+      price: 150,
+      closing: "3 pm"
+    }, {
+      price: 150,
+      closing: "6 pm"
+    }, {
+      price: 300,
+      closing: "11 pm"
+    }, {
+      price: 600,
+      closing: "9 pm"
+    },
+    {
+      price: 1200,
+      closing: "12 am"
+    },
+  ]
 
   return (
     <View style={globalStyles.mainContainer_withoutpadding} >
@@ -103,17 +135,27 @@ export default function Home() {
         <Result_notice />
         {/* tickets */}
         <View style={{ padding: few_constants.paddingHorizantal }} >
-          <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue }]} >Today's Ticktes <Text style={{fontSize: Normalize(10), fontFamily: "Outfit-Medium"}} >( 30th july,22 | Saturday )</Text></Text>
-          <Ticket_card />
-          <Ticket_card />
-          <Ticket_card />
-          <Ticket_card />
-          <Ticket_card />
-          <Ticket_card />
+          <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue }]} >Recent Ticktes <Text style={{ fontSize: Normalize(10), fontFamily: "Outfit-Medium" }} >( 30th july,22 | Saturday )</Text></Text>
+          {
+            data.map((item, index) => (
+              <View key={index} >
+                <Ticket_card item={item} />
+              </View>
+            ))
+          }
+          {/* My order */}
+          <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
+          <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} >
+            {
+              [1, 2, 3, 4, 5, 6, 7].map((item, index) => (
+                <View key={index} style={{ height: Normalize(24), width: "48%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), elevation: Normalize(1), marginBottom: Normalize(8), justifyContent: "center", alignItems: "center", paddingHorizontal: Normalize(6) }} >
+                  <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >11 d 504 000 410</Text>
+                </View>
+              ))
+            }
+          </View>
         </View>
       </ScrollView>
-
-
     </View>
   )
 }
