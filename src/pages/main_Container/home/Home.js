@@ -1,5 +1,5 @@
 import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { globalStyles } from '../../../constant/StylePage'
 import { Normalize } from '../../../constant/for_responsive/Dimens'
 import { Colors } from '../../../constant/Colors'
@@ -8,9 +8,17 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { images } from '../../../constant/Images'
 import { addComma } from '../../../helper/AddComma'
 import { useNavigation } from '@react-navigation/native'
+import { axiosGet } from '../../../http/axios/CustomAxiosCall'
+import { getTime, todayDate, whichDay } from '../../../helper/TimeRelatedFunc'
+import { data } from '../../../helper/DemoData'
+import LoaderPage from '../../../helper/components/LoaderPage'
 export default function Home() {
 
   const navigation = useNavigation()
+
+  const [allSeries, SetAllSeries] = useState([])
+  const [myOrderList, SetMyOrderList] = useState([1, 2, 3, 4, 5, 6, 7])
+  const [loader, SetLoader] = useState(false)
 
   const Home_header = () => {
     return (<View style={{ height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }} >
@@ -68,94 +76,137 @@ export default function Home() {
     return (
       <View style={{ height: Normalize(80), width: "99%", alignSelf: "center", backgroundColor: Colors.lightpurple, marginTop: Normalize(10), elevation: Normalize(2), borderRadius: Normalize(8), padding: Normalize(5) }} >
         <View style={{ flex: 1, flexDirection: "row", }} >
-          <View style={{ height: "100%", width: "35%", borderRadius: Normalize(10), backgroundColor:Colors.background_shade2, overflow: "hidden", elevation: 0.8 }} >
+          <View style={{ height: "100%", width: "35%", borderRadius: Normalize(10), backgroundColor: Colors.background_shade2, overflow: "hidden", elevation: 0.8 }} >
             <Image source={images.ticket} style={{ height: "100%", width: "100%", resizeMode: "contain" }} />
           </View>
           <View style={{ flex: 1, paddingHorizontal: Normalize(8) }} >
-            <Text style={{ fontSize: Normalize(13), fontFamily: "Outfit-SemiBold", color: Colors.blue }} >5 Series Ticktes</Text>
+            <Text style={{ fontSize: Normalize(13), fontFamily: "Outfit-SemiBold", color: Colors.blue }} >{item.series} Ticktes</Text>
             {/* <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color:Colors.blue, paddingTop: Normalize(2) }} >Price: <Text style={{color:Colors.red}} >$ 1200</Text></Text> */}
-            <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color: Colors.red, paddingTop: Normalize(2), letterSpacing: 0.5 }} >Closing Time : <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: Normalize(11.5) }} >{item.closing}</Text></Text>
+            <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color: Colors.red, paddingTop: Normalize(2), letterSpacing: 0.5 }} >Closing Time : <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: Normalize(11.5) }} >{getTime(item.endTime)}</Text></Text>
             <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: Normalize(6) }} >
               <TouchableOpacity
-                onPress={() => navigation.navigate("AllTickets_Page")}
-                style={{ height: "75%", width: "80%", alignItems: "center", justifyContent: "center", alignSelf: "flex-end", backgroundColor: Colors.green, borderRadius: Normalize(20), elevation: Normalize(2) }} >
+                disabled={item.isLock}
+                onPress={() => navigation.navigate("AllTickets_Page", { id: item._id, header: `${item.series} Ticktes` })}
+                style={{ height: "75%", width: "80%", alignItems: "center", justifyContent: "center", alignSelf: "flex-end", backgroundColor: Colors.green, borderRadius: Normalize(20), elevation: Normalize(2), opacity: item.isLock ? 0.7 : 1 }} >
                 <Text style={{ color: Colors.white, fontSize: Normalize(11), fontFamily: "Outfit-Medium", letterSpacing: 0.7 }} >See All Tickets</Text>
               </TouchableOpacity>
+              {/* FFAA33 */}
             </View>
           </View>
         </View>
         <View style={{ backgroundColor: Colors.purple, padding: Normalize(5), position: "absolute", top: Normalize(3), left: Normalize(3), borderRadius: Normalize(5), elevation: Normalize(1) }} >
           <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(8) }} >{few_constants.rupee} <Text style={{ letterSpacing: 0.5 }} >{addComma(item.price)}</Text></Text>
         </View>
-      </View>
+        {item.isLock && <View style={{ backgroundColor: Colors.red, paddingVertical: Normalize(2), paddingHorizontal: Normalize(4), position: "absolute", top: Normalize(5), right: Normalize(5), borderRadius: Normalize(2), elevation: Normalize(1) }} >
+          <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(7) }} >Opening soon</Text>
+        </View>}
 
+
+
+      </View>
     )
   }
+  const Blank_Ticket_card = () => {
+    return (
+      <View style={{ height: Normalize(80), width: "99%", alignSelf: "center", backgroundColor: Colors.lightpurple, marginTop: Normalize(10), elevation: Normalize(2), borderRadius: Normalize(8), overflow: "hidden" }} >
+        <View style={{ flex: 1, padding: Normalize(5), }} >
+          <View style={{ flex: 1, flexDirection: "row" }} >
+            <View style={{ height: "100%", width: "35%", borderRadius: Normalize(10), backgroundColor: Colors.lightpurple, overflow: "hidden", elevation: 0.8 }} >
+              <Image source={images.ticket} style={{ height: "100%", width: "100%", resizeMode: "contain" }} />
+            </View>
+            <View style={{ flex: 1, paddingHorizontal: Normalize(8) }} >
+              <View style={{ height: Normalize(13), width: "75%", backgroundColor: Colors.lightpurple2, borderRadius: Normalize(3), }} />
+              <View style={{ height: Normalize(11), width: "65%", backgroundColor: Colors.lightpurple2, marginTop: Normalize(2), borderRadius: Normalize(3), }} />
+              <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: Normalize(6) }} >
+                <View style={{ height: "75%", width: "80%", alignItems: "center", justifyContent: "center", alignSelf: "flex-end", backgroundColor: Colors.green, borderRadius: Normalize(20), elevation: Normalize(2), }} >
+                  <Text style={{ color: Colors.white, fontSize: Normalize(11), fontFamily: "Outfit-Medium", letterSpacing: 0.7 }} >See All Tickets</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View style={{ backgroundColor: Colors.purple, padding: Normalize(5), position: "absolute", top: Normalize(3), left: Normalize(3), borderRadius: Normalize(5), elevation: Normalize(1) }} >
+            <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(8) }} >{few_constants.rupee} <Text style={{ letterSpacing: 0.5 }} ></Text></Text>
+          </View>
+        </View>
+        <View style={{ height: "100%", width: "100%", position: "absolute", backgroundColor: Colors.background_shade, opacity: 0.8, justifyContent: "center", alignItems: "center" }} >
+          <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.purple, fontSize: Normalize(13) }]} > New Update Coming soon </Text>
+        </View>
 
-  const data = [
-    {
-      price: 30,
-      closing: "12 am"
-    }, {
-      price: 60,
-      closing: "1 pm"
-    }, {
-      price: 120,
-      closing: "11 am"
-    }, {
-      price: 150,
-      closing: "3 pm"
-    }, {
-      price: 150,
-      closing: "6 pm"
-    }, {
-      price: 300,
-      closing: "11 pm"
-    }, {
-      price: 600,
-      closing: "9 pm"
-    },
-    {
-      price: 1200,
-      closing: "12 am"
-    },
-  ]
-
+      </View>
+    )
+  }
+  const getSeriesData = async () => {
+    SetLoader(true)
+    const res = await axiosGet("ticket/series_get")
+    if (res.response) {
+      console.log("getSeriesData---------", res)
+    } else {
+      SetAllSeries(res.data)
+    }
+    SetLoader(false)
+  }
+  useEffect(() => {
+    getSeriesData()
+  }, [])
   return (
     <View style={globalStyles.mainContainer_withoutpadding} >
       <Home_header />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="always"
-      >
+      {
+        loader ?
+          <LoaderPage />
+          :
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="always"
+          >
 
-        {/* banner */}
-        <Home_banner />
-        {/* result and notice */}
-        <Result_notice />
-        {/* tickets */}
-        <View style={{ padding: few_constants.paddingHorizantal }} >
-          <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue }]} >Recent Ticktes <Text style={{ fontSize: Normalize(10), fontFamily: "Outfit-Medium" }} >( 30th july,22 | Saturday )</Text></Text>
-          {
-            data.map((item, index) => (
-              <View key={index} >
-                <Ticket_card item={item} />
+            {/* banner */}
+            <Home_banner />
+            {/* result and notice */}
+            <Result_notice />
+            {/* tickets */}
+            <View style={{ padding: few_constants.paddingHorizantal }} >
+              <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue }]} >Recent Ticktes <Text style={{ fontSize: Normalize(10), fontFamily: "Outfit-Medium" }} >( {todayDate()} | {whichDay()} )</Text></Text>
+
+              {
+                allSeries.length != 0 ?
+                  <View>
+                    {
+                      allSeries.map((item, index) => (
+                        <View key={index} >
+                          <Ticket_card item={item} />
+                        </View>
+                      ))
+                    }
+                  </View>
+                  :
+
+                  <View>
+                    {
+                      [1, 2].map((item, index) => (
+                        <View key={index} >
+                          <Blank_Ticket_card item={item} />
+                        </View>
+                      ))
+                    }
+                  </View>
+
+              }
+              {/* My order */}
+              <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
+              <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} >
+                {
+                  myOrderList.map((item, index) => (
+                    <View key={index} style={{ height: Normalize(24), width: "48%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), elevation: Normalize(1), marginBottom: Normalize(8), justifyContent: "center", alignItems: "center", paddingHorizontal: Normalize(6) }} >
+                      <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >11 d 504 000 410</Text>
+                    </View>
+                  ))
+                }
               </View>
-            ))
-          }
-          {/* My order */}
-          <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
-          <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} >
-            {
-              [1, 2, 3, 4, 5, 6, 7].map((item, index) => (
-                <View key={index} style={{ height: Normalize(24), width: "48%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), elevation: Normalize(1), marginBottom: Normalize(8), justifyContent: "center", alignItems: "center", paddingHorizontal: Normalize(6) }} >
-                  <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >11 d 504 000 410</Text>
-                </View>
-              ))
-            }
-          </View>
-        </View>
-      </ScrollView>
+            </View>
+          </ScrollView>
+      }
+
     </View>
   )
 }

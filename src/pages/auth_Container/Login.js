@@ -25,7 +25,8 @@ export default function Login() {
                 if (password.length == "") {
                     Toast.show("Enter your password")
                 } else {
-                    loginFunc()
+                    // loginFunc()
+                    navigation.navigate("tabBar")
                 }
             }
         } catch (error) {

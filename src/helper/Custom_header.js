@@ -7,23 +7,26 @@ import { Colors } from '../constant/Colors';
 import { few_constants } from '../constant/small_constant/Few_Constants';
 import { globalStyles } from '../constant/StylePage';
 
-export default function Custom_header({back}) {
+export default function Custom_header({ back, title }) {
     const navigation = useNavigation()
     return (
         <View style={headerStyle.mainView} >
-            {back &&
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}>
-                    <Ionicons name={"arrow-back"} color={Colors.lightpurple} size={Normalize(26)} />
-                </TouchableOpacity>}
-            <View style={{ flex: 1, alignItems: "center" }} >
-                <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%" }]} >Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title </Text>
+            <TouchableOpacity
+                disabled={back ? false : true}
+                onPress={() => navigation.goBack()} style={{ flex: 1, justifyContent: "center" }} >
+                {back && <Ionicons name={"arrow-back"} color={Colors.lightpurple} size={Normalize(26)} />}
+            </TouchableOpacity>
+            <View style={{ flex: 9, alignItems: "center", justifyContent: "center" }} >
+                {title && <Text numberOfLines={1} style={{ fontSize: Normalize(14), fontFamily: "Outfit-Medium", color: Colors.white }} >{title}</Text>}
             </View>
-        </View>
+
+            <View style={{ flex: 1 }} />
+
+        </View >
     )
 }
 
 
 const headerStyle = StyleSheet.create({
-    mainView: { height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }
+    mainView: { height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, }
 })

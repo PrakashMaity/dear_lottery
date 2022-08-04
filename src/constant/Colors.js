@@ -3,19 +3,27 @@ export const Colors = {
     background_shade: "#e8e5f4",
     background_shade2: "#e6dff4",
     purple: "#6e46c0",
+    purple2: "#8A2BE2",
     lightpurple: "#ddd7f9",
     lightpurple2: "#af99dc",
+    orange: "#FFA500",
+    blueText: "#1919FF",
+    blueText2: "#0000B3",
+    green: "#179669",
+    red: "#bf0c09",
+
+    
 
     blue_old: '#16a0d5',       //old blue
     blue: '#0e148b',       //new blue   
-    red: "#bf0c09",
+    
     black: '#222',
     grey: '#979797',
     lightGrey: '#ccc',
     shade: '#F9FAFC',
     greyText: '#070C18',
     greylightText: '#545a77',
-    green: "#179669",
+    
     green2: "#296e01",
     facebook: '#4267B2',
     disableText: "#bbc2dc",

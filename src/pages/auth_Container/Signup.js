@@ -25,11 +25,9 @@ export default function Signup() {
 
   const onpressRegister = () => {
     try {
-
-
       const EmailVerify = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
-      if (name == "" || phone == "" || email == "" || password == "" || confirm_password == "") {
+      if (name == "" || phone == "" || password == "" || confirm_password == "") {
         Toast.show("Please fill up all field")
       } else {
         if (name == "" && name.trim("") == "") {
@@ -38,28 +36,25 @@ export default function Signup() {
           if (!phoneNumber_check(phone)[0]) {
             Toast.show(phoneNumber_check(phone)[1])
           } else {
-
-            if (!(EmailVerify.test(email))) {
-              Toast.show("Enter your valid email address")
+            if (password.length < 8) {
+              Toast.show("Enter minimum 8 digits password")
             } else {
-              if (password.length < 8) {
-                Toast.show("Enter minimum 8 digits password")
+              if (confirm_password == "") {
+                Toast.show("Enter confirm password also")
               } else {
-
-                if (confirm_password == "") {
-                  Toast.show("Enter confirm password also")
+                if (password != confirm_password) {
+                  Toast.show("Must be enter same password")
                 } else {
-                  if (password != confirm_password) {
-                    Toast.show("Must be enter same password")
+                  if (email.length > 0) {
+                    if (!(EmailVerify.test(email))) {
+                      Toast.show("Enter your valid email address")
+                    } else {
+                      // registerFunc()
+                      navigation.navigate("tabBar")
+                    }
                   } else {
-                    // console.log({
-                    //   "name": name,
-                    //   "phone": phone,
-                    //   "email": email,
-                    //   "password": password,
-                    //   "confirm_password": confirm_password
-                    // })
-                    registerFunc()
+                    // registerFunc()
+                    navigation.navigate("tabBar")
                   }
                 }
               }
@@ -162,7 +157,7 @@ export default function Signup() {
 
           {/* email */}
 
-          <Text style={globalStyles.textinputHeader} >Enter Email Address</Text>
+          <Text style={globalStyles.textinputHeader} >Enter Email Address <Text style={{ fontSize: Normalize(10) }} >(Optional)</Text></Text>
           <TextInput
             value={email}
             autoCapitalize='none'
