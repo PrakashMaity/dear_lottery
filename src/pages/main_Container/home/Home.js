@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { globalStyles } from '../../../constant/StylePage'
 import { Normalize } from '../../../constant/for_responsive/Dimens'
@@ -12,6 +12,7 @@ import { axiosGet } from '../../../http/axios/CustomAxiosCall'
 import { getTime, todayDate, whichDay } from '../../../helper/TimeRelatedFunc'
 import { data } from '../../../helper/DemoData'
 import LoaderPage from '../../../helper/components/LoaderPage'
+import Toast from 'react-native-simple-toast';
 export default function Home() {
 
   const navigation = useNavigation()
@@ -19,7 +20,7 @@ export default function Home() {
   const [allSeries, SetAllSeries] = useState([])
   const [myOrderList, SetMyOrderList] = useState([1, 2, 3, 4, 5, 6, 7])
   const [loader, SetLoader] = useState(false)
-
+  const [refreshing, SetRefreshing] = useState(false)
   const Home_header = () => {
     return (<View style={{ height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }} >
       <StatusBar backgroundColor={Colors.purple} barStyle={"light-content"} />
@@ -100,9 +101,6 @@ export default function Home() {
         {item.isLock && <View style={{ backgroundColor: Colors.red, paddingVertical: Normalize(2), paddingHorizontal: Normalize(4), position: "absolute", top: Normalize(5), right: Normalize(5), borderRadius: Normalize(2), elevation: Normalize(1) }} >
           <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(7) }} >Opening soon</Text>
         </View>}
-
-
-
       </View>
     )
   }
@@ -128,9 +126,18 @@ export default function Home() {
             <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(8) }} >{few_constants.rupee} <Text style={{ letterSpacing: 0.5 }} ></Text></Text>
           </View>
         </View>
-        <View style={{ height: "100%", width: "100%", position: "absolute", backgroundColor: Colors.background_shade, opacity: 0.8, justifyContent: "center", alignItems: "center" }} >
+
+
+        <View style={{ height: "100%", width: "100%", position: "absolute", backgroundColor: Colors.background_shade, opacity: 0.7, justifyContent: "center", alignItems: "center" }} >
+          {/* <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.purple, fontSize: Normalize(13) }]} > New Update Coming soon </Text> */}
+        </View>
+        <View style={{ height: "100%", width: "100%", position: "absolute", justifyContent: "center", alignItems: "center" }} >
           <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.purple, fontSize: Normalize(13) }]} > New Update Coming soon </Text>
         </View>
+
+        {/* <View style={{ backgroundColor: Colors.red, paddingVertical: Normalize(2), paddingHorizontal: Normalize(4), position: "absolute", top: Normalize(5), right: Normalize(5), borderRadius: Normalize(2), elevation: Normalize(1) }} >
+          <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(7) }} >New Update Coming Soon</Text>
+        </View> */}
 
       </View>
     )
@@ -148,6 +155,23 @@ export default function Home() {
   useEffect(() => {
     getSeriesData()
   }, [])
+
+
+  const refresh_home = async () => {
+    const res = await axiosGet("ticket/series_get")
+    if (res.response) {
+      console.log("getSeriesData---------", res)
+    } else {
+      SetAllSeries(res.data)
+    }
+    SetLoader(false)
+  }
+  const onRefresh = () => {
+    SetRefreshing(true)
+    Toast.show("Refreshing...")
+    refresh_home()
+    SetRefreshing(false)
+  }
   return (
     <View style={globalStyles.mainContainer_withoutpadding} >
       <Home_header />
@@ -158,6 +182,10 @@ export default function Home() {
           <ScrollView
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="always"
+
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           >
 
             {/* banner */}
@@ -193,16 +221,18 @@ export default function Home() {
 
               }
               {/* My order */}
-              <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
-              <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} >
-                {
-                  myOrderList.map((item, index) => (
-                    <View key={index} style={{ height: Normalize(24), width: "48%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), elevation: Normalize(1), marginBottom: Normalize(8), justifyContent: "center", alignItems: "center", paddingHorizontal: Normalize(6) }} >
-                      <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >11 d 504 000 410</Text>
-                    </View>
-                  ))
-                }
-              </View>
+              {myOrderList.length > 0 && <View>
+                <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
+                <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} >
+                  {
+                    myOrderList.map((item, index) => (
+                      <View key={index} style={{ height: Normalize(24), width: "48%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), elevation: Normalize(1), marginBottom: Normalize(8), justifyContent: "center", alignItems: "center", paddingHorizontal: Normalize(6) }} >
+                        <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >11 d 504 000 410</Text>
+                      </View>
+                    ))
+                  }
+                </View>
+              </View>}
             </View>
           </ScrollView>
       }
