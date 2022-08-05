@@ -1,6 +1,6 @@
 import { View, Text, Linking } from 'react-native'
 import React from 'react'
-
+import RNUpiPayment from 'react-native-upi-payment'
 export default function Update() {
 
 
@@ -27,9 +27,32 @@ export default function Update() {
   }
 
 
+  const upi_payment_package_test = () => {
+    RNUpiPayment.initializePayment({
+      vpa: 'prakashmaity@ybl', // or can be john@ybl or mobileNo@upi
+      payeeName: 'prakashmaity@ybl',
+      amount: '1',
+      transactionRef: 'aaaf-532-moei-fu'
+    }, successCallback, failureCallback);
+  }
+
+
+
+  const successCallback = (data) => {
+    console.log("successCallback------", data)
+  }
+
+  const failureCallback = (data) => {
+    console.log("failureCallback------", data)
+  }
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", }}>
-      <Text onPress={() => openPaymentApp("GPAY")} style={{ padding: 20, backgroundColor: "red", color: "white" }} >Update</Text>
+      <Text
+        // onPress={() => openPaymentApp("GPAY")}
+        onPress={upi_payment_package_test}
+
+        style={{ padding: 20, backgroundColor: "red", color: "white" }} >Update</Text>
     </View>
   )
 }
