@@ -10,9 +10,9 @@ const payment =()=>{
     description: 'Credits towards consultation',
     image: 'https://i.imgur.com/3g7nmJC.png',
     currency: 'INR',
-    key: 'rzp_test_16kgTdzOm9OqOS', // Your api key
+    key: 'rzp_live_oFEqC8chIw7LbX', // Your api key
     amount: '100',
-    name: 'foo',
+    name: 'Prakash Maity',
     prefill: {
       email: 'prakashmaity62@gmail.com',
       contact: '9609430604',
