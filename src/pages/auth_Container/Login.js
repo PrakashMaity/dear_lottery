@@ -7,8 +7,10 @@ import { Colors } from '../../constant/Colors'
 import CustomBottom from '../../helper/CustomBottom'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-simple-toast';
-import { useNavigation } from '@react-navigation/native'
+import { CommonActions, useNavigation } from '@react-navigation/native'
 import { apis } from '../../constant/apis/Constants_Apis'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { axiosGet, axiosPost } from '../../http/axios/CustomAxiosCall'
 export default function Login() {
     const navigation = useNavigation()
 
@@ -25,8 +27,8 @@ export default function Login() {
                 if (password.length == "") {
                     Toast.show("Enter your password")
                 } else {
-                    // loginFunc()
-                    navigation.navigate("tabBar")
+                    loginFunc()
+                    // navigation.navigate("tabBar")
                 }
             }
         } catch (error) {
@@ -46,33 +48,45 @@ export default function Login() {
     }
 
     const loginFunc = async () => {
-        try {
-            setLoader(true)
-            const data = {
-                "user": user,
-                "password": password,
-                "role": "user"
-            }
-            const res = await axios.post(`${apis.baseurl}login`, data)
-
-            console.log(res.data)
-
-            if (res.data.massage == "Successfully login") {
-                Toast.show(res.data.massage)
-                setUser("")
-                setPassword("")
-                setPassword_eye(false)
-                Keyboard.dismiss()
-            }
-            setLoader(false)
-        } catch (error) {
-            setLoader(false)
-            if (error.response.status == 404 || error.response.status == 400) {
-                Toast.show(error.response.data.massage)
-            }
-            console.log("loginFunc-----", error.response)
+        setLoader(true)
+        const data = {
+            "user": user,
+            "password": password,
+            "role": "user"
         }
+        const res = await axiosPost("users/login", data)
+        if (res.response) {
+            if (res.response.status == 404 || res.response.status == 400) {
+                Toast.show(res.response.data.massage)
+                setLoader(false)
+            }
+            setLoader(false)
+        } else {
+            // console.log(res)
+            Toast.show(res.massage)
+            // setUser("")
+            // setPassword("")
+            setPassword_eye(false)
+            Keyboard.dismiss()
+            await AsyncStorage.setItem('isLogin', "true")
+            await AsyncStorage.setItem('token', res.token)
+            const jsonValue = JSON.stringify({ user, password })
+            await AsyncStorage.setItem('userDetails', jsonValue)
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 1,
+                    routes: [{ name: "tabBar" }]
+                }));
+            setLoader(false)
+        }
+        setLoader(false)
     }
+
+
+
+
+
+
 
 
 
@@ -126,8 +140,9 @@ export default function Login() {
                         loader={loader}
                         name={"Login"}
                         onPress={onpressLogin}
+                        // onPress={()=>navigation.navigate("tabBar")}
                     />
-                    <Text style={[globalStyles.pageSubHeaderText, { textAlign: "center", fontSize: Normalize(11), paddingBottom: Normalize(20) }]} >Don't have an account? <Text  onPress={() => navigation.navigate("Signup")}  style={{ color: Colors.purple, fontFamily: "Outfit-SemiBold", fontSize: Normalize(12) }} > Register here</Text></Text>
+                    <Text style={[globalStyles.pageSubHeaderText, { textAlign: "center", fontSize: Normalize(11), paddingBottom: Normalize(20) }]} >Don't have an account? <Text onPress={() => navigation.navigate("Signup")} style={{ color: Colors.purple, fontFamily: "Outfit-SemiBold", fontSize: Normalize(12) }} > Register here</Text></Text>
                 </View>
             </ScrollView>
         </View>

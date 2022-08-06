@@ -12,3 +12,13 @@ export const axiosGet = async (link, data) => {
         return error
     }
 }
+
+export const axiosPost = async (link, data) => {
+    try {
+        // console.log(data)
+        const res = await axios.post(`${baseUrl}${link}`,data)
+        return res.data
+    } catch (error) {
+        return error
+    }
+}

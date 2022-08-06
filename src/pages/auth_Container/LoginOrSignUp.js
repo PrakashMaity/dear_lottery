@@ -23,8 +23,8 @@ export default function LoginOrSignUp() {
                 <Text style={{ fontFamily: "Outfit-Regular", fontSize: Normalize(14), color: Colors.greylightText, paddingTop: Normalize(5) }} >Select any one from here</Text>
                 <View style={{ height: Normalize(38), width: "85%", alignSelf: "center", marginTop: Normalize(20), flexDirection: "row", justifyContent: "space-between" }}  >
                     <TouchableOpacity
-                        // onPress={() => navigation.navigate("Login")}
-                        onPress={() => navigation.navigate("tabBar")}
+                        onPress={() => navigation.navigate("Login")}
+                        // onPress={() => navigation.navigate("tabBar")}
                         style={[pageStyles.box, { backgroundColor: Colors.purple }]} >
                         <Text style={{ color: Colors.white, fontSize: Normalize(12), fontFamily: "Outfit-Medium" }} >Login</Text>
                     </TouchableOpacity>

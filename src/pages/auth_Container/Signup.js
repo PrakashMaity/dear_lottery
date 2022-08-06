@@ -1,5 +1,6 @@
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Keyboard } from 'react-native'
 import React, { useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
 import { globalStyles } from '../../constant/StylePage'
 import { Normalize } from '../../constant/for_responsive/Dimens'
@@ -7,8 +8,9 @@ import { Colors } from '../../constant/Colors'
 import CustomBottom from '../../helper/CustomBottom'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-simple-toast';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, CommonActions } from '@react-navigation/native'
 import { apis } from '../../constant/apis/Constants_Apis'
+import { axiosPost } from '../../http/axios/CustomAxiosCall'
 
 export default function Signup() {
   const navigation = useNavigation()
@@ -49,12 +51,10 @@ export default function Signup() {
                     if (!(EmailVerify.test(email))) {
                       Toast.show("Enter your valid email address")
                     } else {
-                      // registerFunc()
-                      navigation.navigate("tabBar")
+                      registerFunc()
                     }
                   } else {
-                    // registerFunc()
-                    navigation.navigate("tabBar")
+                    registerFunc()
                   }
                 }
               }
@@ -78,46 +78,50 @@ export default function Signup() {
       return [true, "ok"]
     }
   }
-
-
   const registerFunc = async () => {
-    try {
-      setLoader(true)
-      const data = {
-        "name": name,
-        "email": email,
-        "phone": phone,
-        "password": password,
-        "role": "user"
-      }
-      const res = await axios.post(`${apis.baseurl}register`, data)
-
-      // console.log(res.data)
-
-      if (res.data.massage == "Successfully Register") {
-        Toast.show(res.data.massage)
-        setName("")
-        setPhone("")
-        setEmail("")
-        setPassword("")
-        setConfirm_password("")
-        setPassword_eye(false)
-        setCon_password_eye(false)
-        Keyboard.dismiss()
-      }
-      setLoader(false)
-    } catch (error) {
-      setLoader(false)
-      // if (error.response.status == 404 || error.response.status == 400) {
-      //   Toast.show(error.response.data.massage)
-      // }
-      console.log("registerFunc-----", error.response)
+    setLoader(true)
+    const data = {
+      "name": name,
+      "email": email,
+      "phone": phone,
+      "password": password,
+      "role": "user"
     }
+    const res = await axiosPost("users/register", data)
+    //  console.log(res)
+    if (res.response) {
+      if (res.response.status == 404 || res.response.status == 400) {
+        // Toast.show(res.response.data.massage)
+        console.log("error")
+        setLoader(false)
+      }
+      setLoader(false)
+    } else {
+      // console.log(res)
+      Toast.show(res.massage)
+      setName("")
+      setPhone("")
+      setEmail("")
+      setPassword("")
+      setConfirm_password("")
+      setPassword_eye(false)
+      setCon_password_eye(false)
+      setPassword_eye(false)
+
+      Keyboard.dismiss()
+      await AsyncStorage.setItem('isLogin', "true")
+      await AsyncStorage.setItem('token', res.token)
+      const jsonValue = JSON.stringify({ user: name, password })
+      await AsyncStorage.setItem('userDetails', jsonValue)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [{ name: "tabBar" }]
+        }));
+      setLoader(false)
+    }
+    setLoader(false)
   }
-
-
-
-
   return (
     <View style={[globalStyles.mainContainer, { paddingHorizontal: Normalize(25) }]} >
       <ScrollView
@@ -219,6 +223,7 @@ export default function Signup() {
             loader={loader}
             name={"Register"}
             onPress={onpressRegister}
+            // onPress={()=>navigation.navigate("tabBar")}
           />
           <Text style={[globalStyles.pageSubHeaderText, { textAlign: "center", fontSize: Normalize(11), paddingBottom: Normalize(20) }]} >Already have an account? <Text onPress={() => navigation.navigate("Login")} style={{ color: Colors.purple, fontFamily: "Outfit-SemiBold", fontSize: Normalize(12) }} > Login here</Text></Text>
         </View>
@@ -226,22 +231,3 @@ export default function Signup() {
     </View>
   )
 }
-
-
-{/* <View style={{ flexDirection: "row", justifyContent: "space-between" }} >
-            <TextInput
-              value={fname}
-              placeholder='First Name'
-              placeholderTextColor={Colors.lightpurple}
-              style={[globalStyles.textinputStyle, { width: "49%" }]}
-              onChangeText={(e) => { setFname(e) }}
-            />
-
-            <TextInput
-              value={lname}
-              placeholder='Last Name'
-              placeholderTextColor={Colors.lightpurple}
-              style={[globalStyles.textinputStyle, { width: "49%" }]}
-              onChangeText={(e) => { setLname(e) }}
-            />
-          </View> */}

@@ -1,5 +1,6 @@
 import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../../constant/StylePage'
 import { Normalize } from '../../../constant/for_responsive/Dimens'
 import { Colors } from '../../../constant/Colors'
@@ -13,6 +14,7 @@ import { getTime, todayDate, whichDay } from '../../../helper/TimeRelatedFunc'
 import { data } from '../../../helper/DemoData'
 import LoaderPage from '../../../helper/components/LoaderPage'
 import Toast from 'react-native-simple-toast';
+
 export default function Home() {
 
   const navigation = useNavigation()
@@ -152,7 +154,20 @@ export default function Home() {
     }
     SetLoader(false)
   }
+
+  const getData = async () => {
+    const isLogin = await AsyncStorage.getItem('isLogin')
+    const userDetails = await AsyncStorage.getItem('userDetails')
+    const token = await AsyncStorage.getItem('token')
+    console.log("isLogin----", isLogin)
+    console.log("token----", token)
+    console.log("userDetails----", userDetails)
+    // await AsyncStorage.setItem('isLogin', "false")
+  }
+
+
   useEffect(() => {
+    // getData()
     getSeriesData()
   }, [])
 

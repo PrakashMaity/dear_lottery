@@ -4,4 +4,5 @@ export const images={
     notice:require("../../assets/notice2.jpg"),
     result:require("../../assets/result2.jpg"),
     ticket:require("../../assets/t4.png"),
+    splash:require("../../assets/splash.png"),
 }
