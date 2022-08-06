@@ -1,56 +1,39 @@
 import { View, Text, Linking } from 'react-native'
 import React from 'react'
-import RNUpiPayment from 'react-native-upi-payment'
+import RazorpayCheckout from 'react-native-razorpay';
+
+// import RNUpiPayment from 'react-native-upi-payment'
 export default function Update() {
 
-
-
-  const openPaymentApp = async (payApp) => {
-    let url = '';
-    let txt = "For ticket"
-    let price = 15
-    let toWhom = "Rocky bhai"
-
-    switch (payApp) {
-      case 'PAYTM': url = 'paytmmp'; break;
-      case 'GPAY': url = 'gpay'; break;
-      case 'PHONEPE': url = 'phonepe'; break;
-    }
-    url = url + `://upi/pay?pa=iamakon810@okicici&pn=${toWhom}&mc=0000&tr=123456789ABCDEFG&tn=${txt}&am=${price}&cu=INR`
-    // console.log('URL : ', url);
-    try {
-      await Linking.openURL(url);
-    }
-    catch (err) {
-      console.error('ERROR : ', err);
-    }
+const payment =()=>{
+  const options = {
+    description: 'Credits towards consultation',
+    image: 'https://i.imgur.com/3g7nmJC.png',
+    currency: 'INR',
+    key: 'rzp_live_oFEqC8chIw7LbX', // Your api key
+    amount: '100',
+    name: 'Prakash Maity',
+    prefill: {
+      email: 'prakashmaity62@gmail.com',
+      contact: '9609430604',
+      name: 'Razorpay Software'
+    },
+    theme: {color: '#F37254'}
   }
-
-
-  const upi_payment_package_test = () => {
-    RNUpiPayment.initializePayment({
-      vpa: 'prakashmaity@ybl', // or can be john@ybl or mobileNo@upi
-      payeeName: 'prakashmaity@ybl',
-      amount: '1',
-      transactionRef: 'aaaf-532-moei-fu'
-    }, successCallback, failureCallback);
-  }
-
-
-
-  const successCallback = (data) => {
-    console.log("successCallback------", data)
-  }
-
-  const failureCallback = (data) => {
-    console.log("failureCallback------", data)
-  }
+  RazorpayCheckout.open(options).then((data) => {
+    // handle success
+    alert(`Success: ${data.razorpay_payment_id}`);
+  }).catch((error) => {
+    // handle failure
+    alert(`Error: ${error.code} | ${error.description}`);
+  });
+}
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", }}>
       <Text
-        // onPress={() => openPaymentApp("GPAY")}
-        onPress={upi_payment_package_test}
+        onPress={() => payment()}
+        // onPress={upi_payment_package_test}
 
         style={{ padding: 20, backgroundColor: "red", color: "white" }} >Update</Text>
     </View>
