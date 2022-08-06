@@ -52,7 +52,8 @@ export default function Login() {
         const data = {
             "user": user,
             "password": password,
-            "role": "user"
+            "role": "user",
+            "fcmCode":"dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
         }
         const res = await axiosPost("users/login", data)
         if (res.response) {

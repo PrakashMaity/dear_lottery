@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "79376864616",
+    "project_id": "dearlottery-e56cb",
+    "storage_bucket": "dearlottery-e56cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79376864616:android:9ecfa542ee4ee7b86eb2dd",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "79376864616-prj87so0m1dsle0i3rbinpufd9k1qjd3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbd8SNGGB3uUaYyzWt970Y6pENkrR41bY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "79376864616-prj87so0m1dsle0i3rbinpufd9k1qjd3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

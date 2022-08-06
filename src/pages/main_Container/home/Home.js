@@ -28,7 +28,9 @@ export default function Home() {
       <StatusBar backgroundColor={Colors.purple} barStyle={"light-content"} />
       <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%" }]} >Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title </Text>
       <View style={{ alignItems: "center" }} >
+       <TouchableOpacity onPress={()=>navigation.navigate("Profile")} > 
         <MaterialCommunityIcons name={"account-circle"} color={Colors.lightpurple} size={Normalize(26)} />
+        </TouchableOpacity>
         <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(9) }]} >{few_constants.rupee} {addComma("10000000")}</Text>
       </View>
     </View>)
@@ -156,14 +158,19 @@ export default function Home() {
   }
 
   const getData = async () => {
-    const isLogin = await AsyncStorage.getItem('isLogin')
-    const userDetails = await AsyncStorage.getItem('userDetails')
-    const token = await AsyncStorage.getItem('token')
-    console.log("isLogin----", isLogin)
-    console.log("token----", token)
-    console.log("userDetails----", userDetails)
-    // await AsyncStorage.setItem('isLogin', "false")
-  }
+    const fcmtoken = await AsyncStorage.getItem('fcmtoken')
+    console.log("fcmtoken----", fcmtoken)
+
+    // const isLogin = await AsyncStorage.getItem('isLogin')
+     // console.log("isLogin----", isLogin)
+
+    // const userDetails = await AsyncStorage.getItem('userDetails')
+    // console.log("userDetails----", userDetails)
+
+
+    // const token = await AsyncStorage.getItem('token')
+       // console.log("token----", token)
+     }
 
 
   useEffect(() => {
