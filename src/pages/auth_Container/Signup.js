@@ -86,7 +86,7 @@ export default function Signup() {
       "phone": phone,
       "password": password,
       "role": "user",
-      "fcmCode":"dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
+      "fcmToken":"dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
     }
     const res = await axiosPost("users/register", data)
     //  console.log(res)
