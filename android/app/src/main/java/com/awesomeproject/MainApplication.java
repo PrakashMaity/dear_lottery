@@ -12,6 +12,7 @@ import com.facebook.soloader.SoLoader;
 import com.awesomeproject.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import com.microsoft.codepush.react.CodePush;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -20,6 +21,10 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
+        }
+        @Override
+        protected String getJSBundleFile() {
+          return CodePush.getJSBundleFile();
         }
 
         @Override
@@ -39,16 +44,18 @@ public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mNewArchitectureNativeHost =
       new MainApplicationReactNativeHost(this);
-
+  
+  
   @Override
   public ReactNativeHost getReactNativeHost() {
+    
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       return mNewArchitectureNativeHost;
     } else {
       return mReactNativeHost;
     }
   }
-
+  
   @Override
   public void onCreate() {
     super.onCreate();

@@ -50,7 +50,7 @@ export default function Update() {
         onPress={() => payment()}
         // onPress={upi_payment_package_test}
 
-        style={{ padding: 20, backgroundColor: "red", color: "white" }} >Update</Text>
+        style={{ padding: 20, backgroundColor: "red", color: "white" }} >Update payment</Text>
     </View>
   )
 }
