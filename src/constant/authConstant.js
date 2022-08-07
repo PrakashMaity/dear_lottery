@@ -1,0 +1,1 @@
+export const razer_pay_token ='rzp_live_oFEqC8chIw7LbX'

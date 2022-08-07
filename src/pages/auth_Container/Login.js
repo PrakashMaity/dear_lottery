@@ -60,6 +60,7 @@ export default function Login() {
             "fcmToken": fcmToken != "" || fcmToken != null ? fcmToken : "dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
         }
         const res = await axiosPost("users/login", data)
+        console.log('Response ',res)
         if (res.response) {
             if (res.response.status == 404 || res.response.status == 400) {
                 Toast.show(res.response.data.massage)
