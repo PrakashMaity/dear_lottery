@@ -14,15 +14,24 @@ import { getTime, todayDate, whichDay } from '../../../helper/TimeRelatedFunc'
 import { data } from '../../../helper/DemoData'
 import LoaderPage from '../../../helper/components/LoaderPage'
 import Toast from 'react-native-simple-toast';
+import { notificationListner } from '../../../helper/notification/PushNotification';
 
 export default function Home() {
 
+
   const navigation = useNavigation()
+
 
   const [allSeries, SetAllSeries] = useState([])
   const [myOrderList, SetMyOrderList] = useState([1, 2, 3, 4, 5, 6, 7])
   const [loader, SetLoader] = useState(false)
   const [refreshing, SetRefreshing] = useState(false)
+
+  useEffect(() => {
+    notificationListner(navigation);
+  }, [])
+
+
   const Home_header = () => {
     return (<View style={{ height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }} >
       <StatusBar backgroundColor={Colors.purple} barStyle={"light-content"} />

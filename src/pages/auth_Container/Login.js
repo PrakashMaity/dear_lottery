@@ -11,6 +11,7 @@ import { CommonActions, useNavigation } from '@react-navigation/native'
 import { apis } from '../../constant/apis/Constants_Apis'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosGet, axiosPost } from '../../http/axios/CustomAxiosCall'
+import messaging from '@react-native-firebase/messaging';
 export default function Login() {
     const navigation = useNavigation()
 
@@ -51,13 +52,19 @@ export default function Login() {
         setLoader(true)
 
         const fcmToken = await AsyncStorage.getItem("fcmtoken")
-
-
+        var fcmToken_for_api = ""
+        if (fcmToken != null) {
+            fcmToken_for_api = fcmToken
+        } else {
+            const newFCMToken = await messaging().getToken();
+            fcmToken_for_api = newFCMToken
+            await AsyncStorage.setItem("fcmtoken", newFCMToken)
+        }
         const data = {
             "user": user,
             "password": password,
             "role": "user",
-            "fcmToken": fcmToken != "" || fcmToken != null ? fcmToken : "dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
+            "fcmToken": fcmToken_for_api
         }
         const res = await axiosPost("users/login", data)
         if (res.response) {
@@ -69,14 +76,27 @@ export default function Login() {
         } else {
             // console.log(res)
             Toast.show(res.massage)
-            // setUser("")
-            // setPassword("")
+            setUser("")
+            setPassword("")
             setPassword_eye(false)
             Keyboard.dismiss()
+
+
             await AsyncStorage.setItem('isLogin', "true")
-            await AsyncStorage.setItem('token', res.token)
-            const jsonValue = JSON.stringify({ user, password })
+
+            const userData = {
+                "user": user,
+                "password": password,
+                "userId": res.data._id,
+                "phoneNo": res.data.phone,
+                "email": res.data.email
+            }
+
+            const jsonValue = JSON.stringify(userData)
             await AsyncStorage.setItem('userDetails', jsonValue)
+            await AsyncStorage.setItem('token', res.token)
+
+            // navigation.navigate("tabBar")
             navigation.dispatch(
                 CommonActions.reset({
                     index: 1,

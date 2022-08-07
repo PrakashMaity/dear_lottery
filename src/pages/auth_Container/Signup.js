@@ -79,50 +79,82 @@ export default function Signup() {
     }
   }
   const registerFunc = async () => {
-    setLoader(true)
-    const fcmToken = await AsyncStorage.getItem("fcmtoken")
-    const data = {
-      "name": name,
-      "email": email,
-      "phone": phone,
-      "password": password,
-      "role": "user",
-      "fcmToken": fcmToken != "" || fcmToken != null ? fcmToken : "dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
-    }
-    const res = await axiosPost("users/register", data)
-    //  console.log(res)
-    if (res.response) {
-      if (res.response.status == 404 || res.response.status == 400) {
-        // Toast.show(res.response.data.massage)
-        console.log("error")
+    try {
+
+      setLoader(true)
+      const fcmToken = await AsyncStorage.getItem("fcmtoken")
+      var fcmToken_for_api = ""
+
+      if (fcmToken != null) {
+          fcmToken_for_api = fcmToken
+      } else {
+          const newFCMToken = await messaging().getToken();
+          fcmToken_for_api = newFCMToken
+          await AsyncStorage.setItem("fcmtoken", newFCMToken)
+      }
+
+
+      const data = {
+        "name": name,
+        "email": email,
+        "phone": phone,
+        "password": password,
+        "role": "user",
+        "fcmToken": fcmToken_for_api
+      }
+      const res = await axiosPost("users/register", data)
+      //  console.log(res)
+      if (res.response) {
+        if (res.response.status == 404 || res.response.status == 400) {
+          // Toast.show(res.response.data.massage)
+          console.log("error")
+          setLoader(false)
+        }
+        setLoader(false)
+      } else {
+        // console.log(res)
+        Toast.show(res.massage)
+        setName("")
+        setPhone("")
+        setEmail("")
+        setPassword("")
+        setConfirm_password("")
+        setPassword_eye(false)
+        setCon_password_eye(false)
+        setPassword_eye(false)
+
+        Keyboard.dismiss()
+
+        await AsyncStorage.setItem('isLogin', "true")
+
+
+        const userData = {
+          "user": name,
+          "password": password,
+          "userId": res.data._id,
+          "phoneNo": res.data.phone,
+          "email": res.data.email
+        }
+        const jsonValue = JSON.stringify(userData)
+
+
+        await AsyncStorage.setItem('userDetails', jsonValue)
+        await AsyncStorage.setItem('token', res.token)
+
+        // navigation.navigate("tabBar")
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "tabBar" }]
+          }));
         setLoader(false)
       }
       setLoader(false)
-    } else {
-      // console.log(res)
-      Toast.show(res.massage)
-      setName("")
-      setPhone("")
-      setEmail("")
-      setPassword("")
-      setConfirm_password("")
-      setPassword_eye(false)
-      setCon_password_eye(false)
-      setPassword_eye(false)
 
-      Keyboard.dismiss()
-      await AsyncStorage.setItem('isLogin', "true")
-      await AsyncStorage.setItem('token', res.token)
-      const jsonValue = JSON.stringify({ user: name, password })
-      await AsyncStorage.setItem('userDetails', jsonValue)
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1,
-          routes: [{ name: "tabBar" }]
-        }));
+    } catch (error) {
       setLoader(false)
+      console.log("error_signup.........", error)
     }
-    setLoader(false)
   }
   return (
     <View style={[globalStyles.mainContainer, { paddingHorizontal: Normalize(25) }]} >

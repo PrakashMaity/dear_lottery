@@ -54,6 +54,9 @@ export const globalStyles = StyleSheet.create({
     planeText_outfit_Medium: {
         fontSize: Normalize(13), fontFamily: "Outfit-Medium", color: Colors.white
     },
+    planeText_outfit_regular: {
+        fontSize: Normalize(13), fontFamily: "Outfit-Regular", color: Colors.purple
+    },
     planeText_outfit_bold: { fontSize: Normalize(15), fontFamily: "Outfit-SemiBold", color: Colors.white },
     topicHeading: { fontSize: Normalize(15), fontFamily: "Outfit-SemiBold", color: Colors.blue, paddingVertical: few_constants.paddingHorizantal },
 
