@@ -67,6 +67,7 @@ export default function Login() {
             "fcmToken": fcmToken_for_api
         }
         const res = await axiosPost("users/login", data)
+        console.log('Response ',res)
         if (res.response) {
             if (res.response.status == 404 || res.response.status == 400) {
                 Toast.show(res.response.data.massage)
