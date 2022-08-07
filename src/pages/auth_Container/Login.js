@@ -49,11 +49,15 @@ export default function Login() {
 
     const loginFunc = async () => {
         setLoader(true)
+
+        const fcmToken = await AsyncStorage.getItem("fcmtoken")
+
+
         const data = {
             "user": user,
             "password": password,
             "role": "user",
-            "fcmToken":"dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
+            "fcmToken": fcmToken != "" || fcmToken != null ? fcmToken : "dA_yV-wZSY-ohl3zuwXcO7:APA91bGUS_-IggL022TkgXRSCRHh8qQV51KdI33zDSYIUQGN6KvQ-jAAPpBmIWluYTysYvHj4hPm6a4KaCBzkzpodjDuhEKPeLM21CHLeh63maw8paqL2REOTgRRHY5mW7SB2KNTj5AI"
         }
         const res = await axiosPost("users/login", data)
         if (res.response) {
@@ -141,7 +145,7 @@ export default function Login() {
                         loader={loader}
                         name={"Login"}
                         onPress={onpressLogin}
-                        // onPress={()=>navigation.navigate("tabBar")}
+                    // onPress={()=>navigation.navigate("tabBar")}
                     />
                     <Text style={[globalStyles.pageSubHeaderText, { textAlign: "center", fontSize: Normalize(11), paddingBottom: Normalize(20) }]} >Don't have an account? <Text onPress={() => navigation.navigate("Signup")} style={{ color: Colors.purple, fontFamily: "Outfit-SemiBold", fontSize: Normalize(12) }} > Register here</Text></Text>
                 </View>
