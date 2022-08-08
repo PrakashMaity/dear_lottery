@@ -26,6 +26,7 @@ import { axiosGet } from '../../../http/axios/CustomAxiosCall';
 import axios from 'axios';
 import LoaderPage from '../../../helper/components/LoaderPage';
 import { razerPay, razerPayGetter } from '../../../helper/paymentHelper';
+import { paymentHandler } from '../../../http/services';
 export default function AllTickets_Page({ route }) {
   const { id, header } = route.params;
   const [all_tickets, setAll_tickets] = useState([]);
@@ -75,21 +76,38 @@ export default function AllTickets_Page({ route }) {
 
   const onPress_buy = () => {
     // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
-    const data = {
-      amount: '100',
-      name: 'xyz@gmail.com',
-      email: 'abc@gmail.com',
-      phone: '9609430604',
+    const dataPayload = {
+      ticketData: [
+        {
+          _id: '62efda44c8620b36d4185a47',
+          isAlreadyBuy: false,
+          userId: '62efd3bd275cdc7cf9865183',
+        },
+        {
+          _id: '62efda44c8620b36d4185a48',
+          isAlreadyBuy: false,
+          userId: '62efd3bd275cdc7cf9865183',
+        },
+      ],
+      razerpay: '415d445dv454v4d4vd4v',
+      ticketBuyer: '62efd3bd275cdc7cf9865183',
     };
-    const result = razerPayGetter(data);
-    RazorpayCheckout.open(result)
-      .then((data) => {
-        console.log('Data :::::::-',data)
-      })
-      .catch((error) => {
-        console.log('error :::::::-',error)
+    paymentHandler(dataPayload);
+    // const data = {
+    //   amount: '100',
+    //   name: 'xyz@gmail.com',
+    //   email: 'abc@gmail.com',
+    //   phone: '9609430604',
+    // };
+    // const result = razerPayGetter(data);
+    // RazorpayCheckout.open(result)
+    //   .then((data) => {
+    //     console.log('Data :::::::-',data)
+    //   })
+    //   .catch((error) => {
+    //     console.log('error :::::::-',error)
 
-      });
+    //   });
   };
 
   const getSeriesData = async () => {
@@ -119,6 +137,7 @@ export default function AllTickets_Page({ route }) {
     getSeriesData();
   }, [id]);
 
+  console.log('all_tickets @@@@------->>>>', all_tickets);
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Custom_header back title={header} />
