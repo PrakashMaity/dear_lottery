@@ -1,5 +1,5 @@
 import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../../constant/StylePage'
 import { Normalize } from '../../../constant/for_responsive/Dimens'
@@ -15,13 +15,12 @@ import { data } from '../../../helper/DemoData'
 import LoaderPage from '../../../helper/components/LoaderPage'
 import Toast from 'react-native-simple-toast';
 import { notificationListner } from '../../../helper/notification/PushNotification';
+import { myContext } from '../../../helper/context/ContextPage';
 
 export default function Home() {
-
+  const { setUserDetails } = useContext(myContext)
 
   const navigation = useNavigation()
-
-
   const [allSeries, SetAllSeries] = useState([])
   const [myOrderList, SetMyOrderList] = useState([1, 2, 3, 4, 5, 6, 7])
   const [loader, SetLoader] = useState(false)
@@ -37,8 +36,8 @@ export default function Home() {
       <StatusBar backgroundColor={Colors.purple} barStyle={"light-content"} />
       <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%" }]} >Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title </Text>
       <View style={{ alignItems: "center" }} >
-       <TouchableOpacity onPress={()=>navigation.navigate("Profile")} > 
-        <MaterialCommunityIcons name={"account-circle"} color={Colors.lightpurple} size={Normalize(26)} />
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")} >
+          <MaterialCommunityIcons name={"account-circle"} color={Colors.lightpurple} size={Normalize(26)} />
         </TouchableOpacity>
         <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(9) }]} >{few_constants.rupee} {addComma("10000000")}</Text>
       </View>
@@ -64,7 +63,6 @@ export default function Home() {
       func: ""
     },
   ]
-
   const Result_notice = () => {
     return (
       <View style={{ height: Normalize(80), marginHorizontal: few_constants.paddingHorizantal, flexDirection: "row", justifyContent: "space-between" }} >
@@ -85,7 +83,6 @@ export default function Home() {
     )
 
   }
-
   const Ticket_card = ({ item }) => {
     return (
       <View style={{ height: Normalize(80), width: "99%", alignSelf: "center", backgroundColor: Colors.lightpurple, marginTop: Normalize(10), elevation: Normalize(2), borderRadius: Normalize(8), padding: Normalize(5) }} >
@@ -166,24 +163,26 @@ export default function Home() {
     SetLoader(false)
   }
 
-  const getData = async () => {
+  const getAsyncStorageDetails = async () => {
     const fcmtoken = await AsyncStorage.getItem('fcmtoken')
-    console.log("fcmtoken----", fcmtoken)
+    const isLogin = await AsyncStorage.getItem('isLogin')
+    const userDetails = await AsyncStorage.getItem('userDetails')
+    const token = await AsyncStorage.getItem('token')
 
-    // const isLogin = await AsyncStorage.getItem('isLogin')
-     // console.log("isLogin----", isLogin)
 
-    // const userDetails = await AsyncStorage.getItem('userDetails')
+    setUserDetails(userDetails)
+
+
+
+    // console.log("fcmtoken----", fcmtoken)
+    // console.log("isLogin----", isLogin)
     // console.log("userDetails----", userDetails)
-
-
-    // const token = await AsyncStorage.getItem('token')
-       // console.log("token----", token)
-     }
+    // console.log("token----", token)
+  }
 
 
   useEffect(() => {
-    // getData()
+    getAsyncStorageDetails()
     getSeriesData()
   }, [])
 

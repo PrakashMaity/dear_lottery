@@ -62,6 +62,7 @@ export const globalStyles = StyleSheet.create({
 
 
 
-    textinputHeader: { color: Colors.purple, fontSize: Normalize(13), fontFamily: "Outfit-Medium", marginLeft: Normalize(1.5) }
+    textinputHeader: { color: Colors.purple, fontSize: Normalize(13), fontFamily: "Outfit-Medium", marginLeft: Normalize(1.5) },
+    comingSoon:{ backgroundColor: Colors.red, color: Colors.white, fontSize: Normalize(8), borderRadius: Normalize(4), paddingHorizontal: Normalize(4), paddingVertical: Normalize(2), fontFamily: "Outfit-SemiBold", marginLeft: Normalize(10) }
 
 })

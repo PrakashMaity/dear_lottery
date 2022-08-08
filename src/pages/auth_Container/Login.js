@@ -67,7 +67,7 @@ export default function Login() {
             "fcmToken": fcmToken_for_api
         }
         const res = await axiosPost("users/login", data)
-        console.log('Response ',res)
+        // console.log('Response ',res)
         if (res.response) {
             if (res.response.status == 404 || res.response.status == 400) {
                 Toast.show(res.response.data.massage)
@@ -86,15 +86,15 @@ export default function Login() {
             await AsyncStorage.setItem('isLogin', "true")
 
             const userData = {
-                "user": user,
-                "password": password,
-                "userId": res.data._id,
-                "phoneNo": res.data.phone,
-                "email": res.data.email
+                name: res.data.name,
+                password: password,
+                userId: res.data._id,
+                phoneNo: res.data.phone,
+                email: res.data.email
             }
 
             const jsonValue = JSON.stringify(userData)
-            await AsyncStorage.setItem('userDetails', jsonValue)
+            await AsyncStorage.setItem('userDetails', jsonValue) 
             await AsyncStorage.setItem('token', res.token)
 
             // navigation.navigate("tabBar")

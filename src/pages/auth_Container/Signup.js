@@ -129,7 +129,7 @@ export default function Signup() {
 
 
         const userData = {
-          "user": name,
+          "name": name,
           "password": password,
           "userId": res.data._id,
           "phoneNo": res.data.phone,
