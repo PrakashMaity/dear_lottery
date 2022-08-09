@@ -7,12 +7,12 @@ import Custom_header from '../../../helper/Custom_header';
 import { few_constants } from '../../../constant/small_constant/Few_Constants';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { globalStyles } from '../../../constant/StylePage';
-export default function Update() {
+export default function Notice() {
 
   return (
     <View style={{ flex: 1 }}>
 
-      <Custom_header title={"Update"} />
+      <Custom_header title={"Notice"} />
       <ScrollView showsVerticalScrollIndicator={false} >
         <View style={{ paddingHorizontal: few_constants.paddingHorizantal, paddingVertical: Normalize(8) }} >
 

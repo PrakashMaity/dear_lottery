@@ -10,6 +10,7 @@ import Tab_navigation from './Tab_navigation';
 import AllTickets_Page from '../pages/main_Container/home/AllTickets_Page';
 import { getAsync } from '../helper/asyncstorage/AsyncStoragePage';
 import IntroPage from '../pages/intro_Container/IntroPage';
+import Result from '../pages/main_Container/home/Result';
 export default function Stack_navigation() {
     const [isLoading, setIsLoading] = useState(false);
     const [isLogin, setIsLogin] = useState("");
@@ -40,6 +41,7 @@ export default function Stack_navigation() {
                 <Stack.Screen name='Signup' component={Signup} />
                 <Stack.Screen name='tabBar' component={Tab_navigation} />
                 <Stack.Screen name='AllTickets_Page' component={AllTickets_Page} />
+                <Stack.Screen name='Result' component={Result} />
             </Stack.Navigator>
         </NavigationContainer>
     )

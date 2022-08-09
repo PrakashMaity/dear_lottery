@@ -69,7 +69,7 @@ export default function Profile() {
                         <MaterialCommunityIcons name={"account"} color={Colors.background_shade} size={Normalize(50)} />
                     </View>
                     <Text style={[globalStyles.planeText_outfit_bold, { paddingTop: Normalize(5) }]} >Ankan Roy</Text>
-                    <Text style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(13), paddingTop: Normalize(3) }]} >Total Earn :  <Text style={{ fontSize: Normalize(12), }} >{few_constants.rupee} {addComma(100000000)}</Text></Text>
+                    <Text style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(13), paddingTop: Normalize(3) }]} >Total Earn :  <Text style={{ fontSize: Normalize(12), }} >{few_constants.rupee} {addComma(0)}</Text></Text>
                 </View>
 
                 {/* details */}

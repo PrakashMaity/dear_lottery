@@ -34,12 +34,12 @@ export default function Home() {
   const Home_header = () => {
     return (<View style={{ height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }} >
       <StatusBar backgroundColor={Colors.purple} barStyle={"light-content"} />
-      <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%" }]} >Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title </Text>
+      <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%" ,letterSpacing:1}]} >Lottery shop <Text style={{fontSize: Normalize(11)}} >(24*7)</Text></Text>
       <View style={{ alignItems: "center" }} >
         <TouchableOpacity onPress={() => navigation.navigate("Profile")} >
           <MaterialCommunityIcons name={"account-circle"} color={Colors.lightpurple} size={Normalize(26)} />
         </TouchableOpacity>
-        <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(9) }]} >{few_constants.rupee} {addComma("10000000")}</Text>
+        <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(9) }]} >{few_constants.rupee} {addComma("0")}</Text>
       </View>
     </View>)
   }
@@ -55,12 +55,12 @@ export default function Home() {
     {
       title: "Notice",
       image: images.notice,
-      func: ""
+      navigateTo: "Notice"
     },
     {
       title: "Result",
       image: images.result,
-      func: ""
+      navigateTo: "Result"
     },
   ]
   const Result_notice = () => {
@@ -70,7 +70,7 @@ export default function Home() {
           two_botton_data.map((item, index) => (
             <View key={index} style={{ height: "100%", width: "48%", alignItems: "center", justifyContent: "space-between" }} >
               <TouchableOpacity
-                onPress={() => { }}
+                onPress={() => {navigation.navigate(item.navigateTo) }}
                 style={{ height: "80%", width: "100%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), overflow: "hidden", elevation: Normalize(2), borderWidth: 0, borderColor: Colors.purple }} >
                 <Image source={item.image} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
               </TouchableOpacity>
@@ -156,7 +156,7 @@ export default function Home() {
     SetLoader(true)
     const res = await axiosGet("ticket/series_get")
     if (res.response) {
-      console.log("getSeriesData---------", res)
+      // console.log("getSeriesData---------", res)
     } else {
       SetAllSeries(res.data)
     }

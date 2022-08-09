@@ -9,10 +9,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../pages/main_Container/home/Home';
 import More from '../pages/main_Container/more/More';
 import Profile from '../pages/main_Container/profile/Profile';
-import Update from '../pages/main_Container/update/Update';
 import Winners from '../pages/main_Container/winners/Winners';
 import { Colors } from '../constant/Colors';
 import { Normalize } from '../constant/for_responsive/Dimens';
+import Notice from '../pages/main_Container/notice/Notice';
 const { height, width } = Dimensions.get('window')
 
 const whichLogo = (val,isFocused) => {
@@ -113,7 +113,7 @@ export default function Tab_navigation() {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={props => <MyTabBar {...props} />}>
             <Tab.Screen name="Home" component={Home} />
-            <Tab.Screen name="Update" component={Update} />
+            <Tab.Screen name="Notice" component={Notice} />
             <Tab.Screen name="Winners" component={Winners} />
             <Tab.Screen name="Profile" component={Profile} />
             <Tab.Screen name="More" component={More} />
