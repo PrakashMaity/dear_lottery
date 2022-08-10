@@ -2,7 +2,7 @@ export const Colors = {
     white: "#ffffff",
     background_shade: "#e8e5f4",
     background_shade2: "#e6dff4",
-    purple: "#6e46c0",
+    purple: "#010064",
     purple2: "#8A2BE2",
     lightpurple: "#ddd7f9",
     lightpurple2: "#af99dc",
@@ -12,6 +12,13 @@ export const Colors = {
     green: "#179669",
     red: "#bf0c09",
 
+
+
+    // 6e46c0   old perple
+
+    // 00008B   blue
+    // 15195A
+    // 111E6C
     
 
     blue_old: '#16a0d5',       //old blue
