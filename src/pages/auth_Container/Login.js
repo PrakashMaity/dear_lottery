@@ -82,9 +82,6 @@ export default function Login() {
             setPassword_eye(false)
             Keyboard.dismiss()
 
-
-            await AsyncStorage.setItem('isLogin', "true")
-
             const userData = {
                 name: res.data.name,
                 password: password,
@@ -93,8 +90,12 @@ export default function Login() {
                 email: res.data.email
             }
 
+            const login_details = { "user": user, "password": password };
+            const to_stringify = JSON.stringify(login_details)
+            await AsyncStorage.setItem('login_details', to_stringify);
+
             const jsonValue = JSON.stringify(userData)
-            await AsyncStorage.setItem('userDetails', jsonValue) 
+            await AsyncStorage.setItem('userDetails', jsonValue)
             await AsyncStorage.setItem('token', res.token)
 
             // navigation.navigate("tabBar")

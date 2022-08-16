@@ -41,7 +41,6 @@ export default function Notice() {
 
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
-
       <Custom_header title={"Notice"} />
       {
         loader ?
@@ -56,12 +55,13 @@ export default function Notice() {
                     <Text style={[globalStyles.planeText_outfit_regular, { color: Colors.blueText2, fontSize: Normalize(11.5), paddingVertical: Normalize(5) }]} >
                       {item.content}
                     </Text>
-                    <Text style={[globalStyles.planeText_outfit_regular, { fontSize: Normalize(11.5), color: Colors.blue, textAlign: "right" }]} >{getDate(item.createdAt)}   {getTime(item.createdAt)}</Text>
+                    <View style={{flexDirection:"row",justifyContent:"space-between"}} >
+                      <Text style={[globalStyles.planeText_outfit_regular, { fontSize: Normalize(11.5), color: Colors.blue }]} >{getDate(item.createdAt)}</Text>
+                      <Text style={[globalStyles.planeText_outfit_regular, { fontSize: Normalize(11.5), color: Colors.blue }]} >{getTime(item.createdAt)}</Text>
+                    </View>
                   </View>
                 ))
-
               }
-
             </View>
           </ScrollView>}
     </View>

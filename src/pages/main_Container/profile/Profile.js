@@ -56,6 +56,7 @@ export default function Profile() {
         await AsyncStorage.removeItem('isLogin')
         await AsyncStorage.removeItem('userDetails')
         await AsyncStorage.removeItem('token')
+        await AsyncStorage.removeItem('login_details')
 
 
         navigation.dispatch(
@@ -159,11 +160,11 @@ export default function Profile() {
                     </TouchableOpacity>
 
                 </View>
-                <CustomBottom
+                {/* <CustomBottom
                     onPress={onpressEditModal}
                     style={{ width: "70%", marginTop: Normalize(40) }}
                     name={"Edit Profile"}
-                />
+                /> */}
                 {editModal &&
                     <Modal
                         transparent

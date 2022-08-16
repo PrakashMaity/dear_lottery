@@ -38,8 +38,8 @@ export default function Signup() {
           if (!phoneNumber_check(phone)[0]) {
             Toast.show(phoneNumber_check(phone)[1])
           } else {
-            if (password.length < 8) {
-              Toast.show("Enter minimum 8 digits password")
+            if (password.length < 6) {
+              Toast.show("Enter minimum 6 digits password")
             } else {
               if (confirm_password == "") {
                 Toast.show("Enter confirm password also")
@@ -86,11 +86,11 @@ export default function Signup() {
       var fcmToken_for_api = ""
 
       if (fcmToken != null) {
-          fcmToken_for_api = fcmToken
+        fcmToken_for_api = fcmToken
       } else {
-          const newFCMToken = await messaging().getToken();
-          fcmToken_for_api = newFCMToken
-          await AsyncStorage.setItem("fcmtoken", newFCMToken)
+        const newFCMToken = await messaging().getToken();
+        fcmToken_for_api = newFCMToken
+        await AsyncStorage.setItem("fcmtoken", newFCMToken)
       }
 
 
@@ -103,10 +103,10 @@ export default function Signup() {
         "fcmToken": fcmToken_for_api
       }
       const res = await axiosPost("users/register", data)
-      //  console.log(res)
+       console.log(res)
       if (res.response) {
-        if (res.response.status == 404 || res.response.status == 400) {
-          // Toast.show(res.response.data.massage)
+        if (res.response.status == 404 || res.response.status == 400||res.response.status == 401) {
+          Toast.show(res.response)
           console.log("error")
           setLoader(false)
         }
@@ -125,8 +125,9 @@ export default function Signup() {
 
         Keyboard.dismiss()
 
-        await AsyncStorage.setItem('isLogin', "true")
 
+        const login_details = { "user": phone, "password": password };
+        const to_stringify = JSON.stringify(login_details)
 
         const userData = {
           "name": name,
@@ -137,7 +138,7 @@ export default function Signup() {
         }
         const jsonValue = JSON.stringify(userData)
 
-
+        await AsyncStorage.setItem('login_details', to_stringify);
         await AsyncStorage.setItem('userDetails', jsonValue)
         await AsyncStorage.setItem('token', res.token)
 
@@ -182,7 +183,7 @@ export default function Signup() {
 
           {/* phone number */}
 
-          <Text style={globalStyles.textinputHeader} >Enter Phone Number</Text>
+          <Text style={globalStyles.textinputHeader} >Enter whatsapp Number</Text>
           <TextInput
             value={phone}
             keyboardType="phone-pad"

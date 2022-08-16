@@ -40,7 +40,7 @@ export default function Home() {
         <TouchableOpacity onPress={() => navigation.navigate("Profile")} >
           <MaterialCommunityIcons name={"account-circle"} color={Colors.lightpurple} size={Normalize(26)} />
         </TouchableOpacity>
-        <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(9) }]} >{few_constants.rupee} {addComma("0")}</Text>
+        {/* <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { fontSize: Normalize(9) }]} >{few_constants.rupee} {addComma("0")}</Text> */}
       </View>
     </View>)
   }
