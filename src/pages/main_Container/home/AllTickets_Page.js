@@ -33,6 +33,7 @@ export default function AllTickets_Page({ route }) {
   const { userDetails } = useContext(myContext)
   const { id, header } = route.params;
   const [all_tickets, setAll_tickets] = useState([]);
+  const [seriesData,setSeriesData]= useState('')
   const [price, setPrice] = useState('');
   const [seriesId, setSeriesId] = useState('');
   const [refreshing, SetRefreshing] = useState(false)
@@ -83,7 +84,7 @@ export default function AllTickets_Page({ route }) {
     };
     const res = await axiosGet('ticket/ticket_list_get', data);
 
-    // console.log(res)
+    console.log(res.data)
 
     if (res.response) {
       console.log('getSeriesData------', res.response);
@@ -104,8 +105,38 @@ export default function AllTickets_Page({ route }) {
   useEffect(() => {
     getSeriesData();
   }, [id]);
+
+
+
+
   const onPress_buy = async () => {
     const userdata = JSON.parse(userDetails)
+    const ticketArrayData = ticketDataMapper()
+    console.log('ticketArrayData ',ticketArrayData)
+
+    const dataPayload = {
+      ticketData: ticketArrayData,
+      ticketBuyer: userdata.userId,
+    };
+    console.log('userdata',userdata)
+
+    const resSendData = await axiosPatch(`payment/ticket_borrow?ticketTableId=${seriesId}`, dataPayload)
+    console.log('Ticket borrow :',resSendData)
+    if(!resSendData){
+      console.log('resSendData :',resSendData)
+      Toast.show('Somethink went wrong')
+
+    }
+    // if(resSendData.status === 400){
+
+    // }
+    // if(resSendData.status === 404){
+      
+    // }
+    // if(resSendData.status === 500){
+      
+    // }
+
     const data = {
       amount: '100',
       name: userdata.name,
@@ -113,18 +144,20 @@ export default function AllTickets_Page({ route }) {
       // phone: userdata.phoneNo,
       phone: "9733492348",
     };
+
     const result = razerPayGetter(data);
     RazorpayCheckout.open(result)
       .then((data) => {
         // console.log('Data :::::::-', data)
         if (data.razorpay_payment_id) {
           Toast.show("Payment Sucessfull")
-          after_payment(data.razorpay_payment_id)
+          after_payment(data.razorpay_payment_id,resSendData)
           // console.log("razorpay_payment_id-------------", data.razorpay_payment_id)
         }
       })
       .catch((error) => {
         // console.log("Error:", error);
+        borrow_remove_handler(resSendData)
         if (error.error) {
           if (error.error.reason) {
             Toast.show(error.error.reason)
@@ -133,10 +166,18 @@ export default function AllTickets_Page({ route }) {
       });
   }
 
-  const after_payment = async (razerpayId) => {
-    // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
+  const borrow_remove_handler =async(resSendData)=>{
+    const dataPayload = {
+      freshData: resSendData.data,
+      ticketTableId: seriesId,
+    };
+    //  paymentHandler(dataPayload, seriesId);
+    const res = await axiosPatch(`payment/ticket_remove`, dataPayload)
+    console.log('res scscnscnsck 122sdv1 ----',res)
+  }
+  const ticketDataMapper=()=>{
     const userdata = JSON.parse(userDetails)
-    var selectedArr = []
+    const selectedArr = []
     all_tickets.map((item, index) => {
       if (item.isSelected) {
         selectedArr.push({
@@ -146,8 +187,16 @@ export default function AllTickets_Page({ route }) {
         })
       }
     })
+
+    return selectedArr;
+  }
+
+  const after_payment = async (razerpayId,resSendData) => {
+    // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
+    const userdata = JSON.parse(userDetails)
+    const ticketArrayData = resSendData;
     const dataPayload = {
-      ticketData: selectedArr,
+      ticketData: ticketArrayData.data,
       razerpay: razerpayId,
       ticketBuyer: userdata.userId,
     };
@@ -155,7 +204,7 @@ export default function AllTickets_Page({ route }) {
     const res = await axiosPatch(`payment/payment_acc?ticketTableId=${seriesId}`, dataPayload)
     if (res.response) {
       // console.log(res.response)
-      console.log("error")
+      console.log(res.response)
     } else {
       console.log(res)
       Toast.show(res.massage)
