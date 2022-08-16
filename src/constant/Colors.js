@@ -1,25 +1,18 @@
 export const Colors = {
     white: "#ffffff",
-    background_shade: "#e8e5f4",
-    background_shade2: "#e6dff4",
+    background_shade: "#eaeaff",
+    background_shade2: "#eaeaff",
     purple: "#010064",
-    purple2: "#8A2BE2",
-    lightpurple: "#ddd7f9",
-    lightpurple2: "#af99dc",
+    purple2: "#010064",
+    lightpurple: "#dbdbff",
+    lightpurple2: "#b8b8ff",
     orange: "#FFA500",
     blueText: "#1919FF",
     blueText2: "#0000B3",
     green: "#179669",
     red: "#bf0c09",
 
-
-
-    // 6e46c0   old perple
-
-    // 00008B   blue
-    // 15195A
-    // 111E6C
-    
+   
 
     blue_old: '#16a0d5',       //old blue
     blue: '#0e148b',       //new blue   

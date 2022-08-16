@@ -386,7 +386,7 @@ export default function AllTickets_Page({ route }) {
                   height: '70%',
                   width: '90%',
                   backgroundColor:
-                    countTIcket() > 0 ? Colors.purple : Colors.lightpurple2,
+                    countTIcket() > 0 ? Colors.purple : Colors.lightpurple,
                   borderRadius: Normalize(50),
                   elevation: Normalize(1),
                   justifyContent: 'center',
@@ -397,8 +397,9 @@ export default function AllTickets_Page({ route }) {
                   style={{
                     fontFamily: 'Outfit-SemiBold',
                     fontSize: Normalize(12),
+                    opacity: countTIcket() > 0 ? 1 : 0.2,
                     color:
-                      countTIcket() > 0 ? Colors.white : Colors.lightpurple,
+                      countTIcket() > 0 ? Colors.white : Colors.purple,
                   }}
                 >
                   Buy Now

@@ -10,7 +10,7 @@ import { globalStyles } from '../../../constant/StylePage';
 export default function Notice() {
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={globalStyles.mainContainer_withoutpadding}>
 
       <Custom_header title={"Notice"} />
       <ScrollView showsVerticalScrollIndicator={false} >
@@ -19,7 +19,7 @@ export default function Notice() {
           {
             [0, 1, 2, 3, 4, 5].map((item, index) => (
               <View key={index} style={{ padding: Normalize(8), width: "99%", alignSelf: "center", backgroundColor: Colors.lightpurple, marginBottom: Normalize(8), borderRadius: Normalize(8), elevation: Normalize(3), }} >
-                <Text numberOfLines={2} style={[globalStyles.planeText_outfit_bold, { fontSize: Normalize(12), color: Colors.blue, letterSpacing: 0.5 }]} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</Text>
+                <Text numberOfLines={2} style={[globalStyles.planeText_outfit_bold, { fontSize: Normalize(12), color: Colors.purple, letterSpacing: 0.5 }]} >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</Text>
                 <Text style={[globalStyles.planeText_outfit_regular, { color: Colors.blueText2, fontSize: Normalize(11.5), paddingVertical: Normalize(5) }]} >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                 </Text>

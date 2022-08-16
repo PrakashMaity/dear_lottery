@@ -13,7 +13,7 @@ export default function Winners() {
             <Custom_header title={"Result"} />
             <ScrollView showsVerticalScrollIndicator={false} >
                 <View style={{ flex: 1, paddingHorizontal: few_constants.paddingHorizantal, paddingVertical: Normalize(10) }} >
-                    <View style={{ width: "99%", alignSelf: "center", backgroundColor: Colors.background_shade2, borderRadius: Normalize(8), elevation: Normalize(2), marginBottom: Normalize(10), paddingVertical: Normalize(8), paddingHorizontal: Normalize(13), borderWidth: Normalize(1), borderColor: Colors.purple2 }} >
+                    <View style={{ width: "99%", alignSelf: "center", backgroundColor: Colors.background_shade, borderRadius: Normalize(8), elevation: Normalize(2), marginBottom: Normalize(10), paddingVertical: Normalize(8), paddingHorizontal: Normalize(13), borderWidth: Normalize(1), borderColor: Colors.purple2 }} >
                         <Text style={[styles.textTitle, { paddingTop: Normalize(5) }]} ><Text style={styles.arrowStyle} >➢</Text>   Winner Name  :  <Text style={styles.textDetails} ></Text>  Ankan Roy</Text>
                         <Text style={styles.textTitle} ><Text style={styles.arrowStyle} >➢   </Text>Winning Amount  :  {few_constants.rupee} {addComma(50000)}</Text>
                         <Text style={styles.textTitle} ><Text style={styles.arrowStyle} >➢   </Text>12 series Ticket  :  s354g3sfs354g3sf</Text>

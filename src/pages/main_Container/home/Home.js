@@ -16,9 +16,10 @@ import LoaderPage from '../../../helper/components/LoaderPage'
 import Toast from 'react-native-simple-toast';
 import { notificationListner } from '../../../helper/notification/PushNotification';
 import { myContext } from '../../../helper/context/ContextPage';
+import { rang } from '../../../helper/colorChange/SelectTheme';
 
 export default function Home() {
-  const { setUserDetails } = useContext(myContext)
+  const { setUserDetails, themeColor } = useContext(myContext)
 
   const navigation = useNavigation()
   const [allSeries, SetAllSeries] = useState([])
@@ -34,7 +35,7 @@ export default function Home() {
   const Home_header = () => {
     return (<View style={{ height: Normalize(50), width: "100%", backgroundColor: Colors.purple, flexDirection: "row", paddingHorizontal: few_constants.paddingHorizantal, alignItems: "center", justifyContent: "space-between" }} >
       <StatusBar backgroundColor={Colors.purple} barStyle={"light-content"} />
-      <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%" ,letterSpacing:1}]} >Lottery shop <Text style={{fontSize: Normalize(11)}} >(24*7)</Text></Text>
+      <Text numberOfLines={1} style={[globalStyles.planeText_outfit_Medium, { width: "70%", letterSpacing: 1 }]} >Lottery shop <Text style={{ fontSize: Normalize(11) }} >(24*7)</Text></Text>
       <View style={{ alignItems: "center" }} >
         <TouchableOpacity onPress={() => navigation.navigate("Profile")} >
           <MaterialCommunityIcons name={"account-circle"} color={Colors.lightpurple} size={Normalize(26)} />
@@ -50,7 +51,6 @@ export default function Home() {
       </View>
     )
   }
-
   const two_botton_data = [
     {
       title: "Notice",
@@ -70,7 +70,7 @@ export default function Home() {
           two_botton_data.map((item, index) => (
             <View key={index} style={{ height: "100%", width: "48%", alignItems: "center", justifyContent: "space-between" }} >
               <TouchableOpacity
-                onPress={() => {navigation.navigate(item.navigateTo) }}
+                onPress={() => { navigation.navigate(item.navigateTo) }}
                 style={{ height: "80%", width: "100%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), overflow: "hidden", elevation: Normalize(2), borderWidth: 0, borderColor: Colors.purple }} >
                 <Image source={item.image} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
               </TouchableOpacity>
@@ -162,12 +162,13 @@ export default function Home() {
     }
     SetLoader(false)
   }
-
   const getAsyncStorageDetails = async () => {
     const fcmtoken = await AsyncStorage.getItem('fcmtoken')
     const isLogin = await AsyncStorage.getItem('isLogin')
     const userDetails = await AsyncStorage.getItem('userDetails')
     const token = await AsyncStorage.getItem('token')
+
+    const theme = await AsyncStorage.getItem('theme')
 
 
     setUserDetails(userDetails)
@@ -178,15 +179,12 @@ export default function Home() {
     // console.log("isLogin----", isLogin)
     // console.log("userDetails----", userDetails)
     // console.log("token----", token)
+    // console.log("theme----", theme, "async--------", themeColor)
   }
-
-
   useEffect(() => {
     getAsyncStorageDetails()
     getSeriesData()
   }, [])
-
-
   const refresh_home = async () => {
     const res = await axiosGet("ticket/series_get")
     if (res.response) {
@@ -223,8 +221,14 @@ export default function Home() {
             {/* result and notice */}
             <Result_notice />
             {/* tickets */}
+
+
+            {/* <TouchableOpacity
+              style={{ height: 100, width: "100%", backgroundColor: rang().deep }} >
+            </TouchableOpacity> */}
+
             <View style={{ padding: few_constants.paddingHorizantal }} >
-              <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue }]} >Recent Ticktes <Text style={{ fontSize: Normalize(10), fontFamily: "Outfit-Medium" }} >( {todayDate()} | {whichDay()} )</Text></Text>
+              <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.purple }]} >Recent Ticktes <Text style={{ fontSize: Normalize(10), fontFamily: "Outfit-Medium" }} >( {todayDate()} | {whichDay()} )</Text></Text>
 
               {
                 allSeries.length != 0 ?
@@ -252,7 +256,7 @@ export default function Home() {
               }
               {/* My order */}
               {myOrderList.length > 0 && <View>
-                <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.blue, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
+                <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.purple, paddingVertical: few_constants.paddingHorizantal }]} >My Order</Text>
                 <View style={{ flexWrap: "wrap", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }} >
                   {
                     myOrderList.map((item, index) => (

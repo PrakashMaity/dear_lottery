@@ -65,7 +65,7 @@ export default function Profile() {
             <View style={[globalStyles.mainContainer_withoutpadding]} >
                 {/* profile picture name total earn */}
                 <View style={{ height: Normalize(150), backgroundColor: Colors.purple, width: "100%", justifyContent: "center", alignItems: "center" }}>
-                    <View style={{ height: Normalize(67), width: Normalize(67), borderRadius: Normalize(67) / 2, backgroundColor: Colors.lightpurple2, justifyContent: "center", alignItems: "center" }} >
+                    <View style={{ height: Normalize(67), width: Normalize(67), borderRadius: Normalize(67) / 2, backgroundColor: Colors.lightpurple, justifyContent: "center", alignItems: "center" }} >
                         <MaterialCommunityIcons name={"account"} color={Colors.background_shade} size={Normalize(50)} />
                     </View>
                     <Text style={[globalStyles.planeText_outfit_bold, { paddingTop: Normalize(5) }]} >Ankan Roy</Text>
