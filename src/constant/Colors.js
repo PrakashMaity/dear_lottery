@@ -12,20 +12,21 @@ export const Colors = {
     green: "#179669",
     red: "#bf0c09",
 
-   
+
 
     blue_old: '#16a0d5',       //old blue
     blue: '#0e148b',       //new blue   
-    
+
     black: '#222',
     grey: '#979797',
     lightGrey: '#ccc',
     shade: '#F9FAFC',
     greyText: '#070C18',
     greylightText: '#545a77',
-    
+
     green2: "#296e01",
     facebook: '#4267B2',
+    whatsapp_green: '#25D366',
     disableText: "#bbc2dc",
     disableBackGround: "#e7ebfb",
     msgReciver: "#e7ebfb",

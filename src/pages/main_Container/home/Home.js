@@ -10,7 +10,7 @@ import { images } from '../../../constant/Images'
 import { addComma } from '../../../helper/AddComma'
 import { useNavigation } from '@react-navigation/native'
 import { axiosGet } from '../../../http/axios/CustomAxiosCall'
-import { getTime, todayDate, whichDay } from '../../../helper/TimeRelatedFunc'
+import { getseriesTime, todayDate, whichDay } from '../../../helper/TimeRelatedFunc'
 import { data } from '../../../helper/DemoData'
 import LoaderPage from '../../../helper/components/LoaderPage'
 import Toast from 'react-native-simple-toast';
@@ -93,7 +93,7 @@ export default function Home() {
           <View style={{ flex: 1, paddingHorizontal: Normalize(8) }} >
             <Text style={{ fontSize: Normalize(13), fontFamily: "Outfit-SemiBold", color: Colors.blue }} >{item.series} Ticktes</Text>
             {/* <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color:Colors.blue, paddingTop: Normalize(2) }} >Price: <Text style={{color:Colors.red}} >$ 1200</Text></Text> */}
-            <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color: Colors.red, paddingTop: Normalize(2), letterSpacing: 0.5 }} >Closing Time : <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: Normalize(11.5) }} >{getTime(item.endTime)}</Text></Text>
+            <Text style={{ fontSize: Normalize(11), fontFamily: "Outfit-Medium", color: Colors.red, paddingTop: Normalize(2), letterSpacing: 0.5 }} >Closing Time : <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: Normalize(11.5) }} >{getseriesTime(item.endTime)}</Text></Text>
             <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: Normalize(6) }} >
               <TouchableOpacity
                 disabled={item.isLock}

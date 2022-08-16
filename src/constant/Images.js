@@ -5,4 +5,5 @@ export const images={
     result:require("../../assets/result2.jpg"),
     ticket:require("../../assets/t4.png"),
     splash:require("../../assets/splash.png"),
+    whatsapp:require("../../assets/whatsapp-logo.png"),
 }
