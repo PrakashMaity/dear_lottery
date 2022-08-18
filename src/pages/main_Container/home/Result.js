@@ -1,4 +1,4 @@
-import { View, Text, Linking, FlatList, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ImageView from "react-native-image-viewing";
 import { globalStyles } from '../../../constant/StylePage'
@@ -6,9 +6,8 @@ import Custom_header from '../../../helper/Custom_header'
 import { few_constants } from '../../../constant/small_constant/Few_Constants'
 import { Normalize } from '../../../constant/for_responsive/Dimens'
 import { Colors } from '../../../constant/Colors'
-import { getDate, todayDate } from '../../../helper/TimeRelatedFunc';
+import { getDate } from '../../../helper/TimeRelatedFunc';
 import { modifiedAxiosGet } from '../../../http/axios/CustomAxiosCall';
-import { ImagesUrl } from '../../../http/imagesUrl';
 import LoaderPage from '../../../helper/components/LoaderPage';
 
 export default function Result() {
@@ -20,7 +19,6 @@ export default function Result() {
         setSelectImageIdx(val)
         setIsVisible(true)
     }
-
     const getWinnerResult = async () => {
         try {
             setLoader(true)
@@ -32,7 +30,7 @@ export default function Result() {
 
                 var newArr = []
                 res.data.data.map((item, index) => {
-                    item.uri = ImagesUrl.imageUrl + item.result
+                    item.uri = item.result
                     newArr.push(item)
                 })
                 setAllResult(newArr)
@@ -45,7 +43,6 @@ export default function Result() {
             console.log("getWinnerResult---", error)
         }
     }
-
     useEffect(() => {
         getWinnerResult()
     }, [])
@@ -67,7 +64,7 @@ export default function Result() {
                                             <TouchableOpacity
                                                 onPress={() => imagesOnpress(index)}
                                                 style={{ flex: 1, backgroundColor: Colors.background_shade, margin: Normalize(5), borderRadius: Normalize(8), overflow: "hidden", borderWidth: Normalize(1), borderColor: Colors.purple }} >
-                                                <Image source={{ uri: ImagesUrl.imageUrl + item.result }} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
+                                                <Image source={{ uri: item.result }} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
                                             </TouchableOpacity>
                                         </View>
                                         {

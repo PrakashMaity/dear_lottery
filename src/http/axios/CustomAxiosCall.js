@@ -50,3 +50,22 @@ export const axiosPatch = async (link, data) => {
         return error
     }
 }
+
+
+export const modifiedAxiosPatch = async (link, data) => {
+    try {
+        const response = await axios.patch(`${baseUrl}${link}`, data)
+        return { success: true, status: response.status, data: response.data };
+    } catch (error) {
+        if (error.response)
+            return {
+                success: false,
+                status: error.response.status,
+                message: error.response,
+            };
+        else {
+            return { success: false, status: 500 };
+        }
+    }
+};
+

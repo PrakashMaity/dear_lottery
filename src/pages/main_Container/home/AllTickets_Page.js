@@ -23,7 +23,7 @@ import { useNavigation } from '@react-navigation/native';
 import Custom_header from '../../../helper/Custom_header';
 import { allNumbers } from '../../../helper/DemoData';
 import Toast from 'react-native-simple-toast';
-import { axiosGet, axiosPatch } from '../../../http/axios/CustomAxiosCall';
+import { axiosGet, axiosPatch, modifiedAxiosPatch } from '../../../http/axios/CustomAxiosCall';
 import axios from 'axios';
 import LoaderPage from '../../../helper/components/LoaderPage';
 import { razerPay, razerPayGetter } from '../../../helper/paymentHelper';
@@ -33,7 +33,7 @@ export default function AllTickets_Page({ route }) {
   const { userDetails } = useContext(myContext)
   const { id, header } = route.params;
   const [all_tickets, setAll_tickets] = useState([]);
-  const [seriesData,setSeriesData]= useState('')
+  const [seriesData, setSeriesData] = useState('')
   const [price, setPrice] = useState('');
   const [seriesId, setSeriesId] = useState('');
   const [refreshing, SetRefreshing] = useState(false)
@@ -84,7 +84,7 @@ export default function AllTickets_Page({ route }) {
     };
     const res = await axiosGet('ticket/ticket_list_get', data);
 
-    console.log(res.data)
+    // console.log(res.data)
 
     if (res.response) {
       console.log('getSeriesData------', res.response);
@@ -112,18 +112,18 @@ export default function AllTickets_Page({ route }) {
   const onPress_buy = async () => {
     const userdata = JSON.parse(userDetails)
     const ticketArrayData = ticketDataMapper()
-    console.log('ticketArrayData ',ticketArrayData)
+    console.log('ticketArrayData ', ticketArrayData)
 
     const dataPayload = {
       ticketData: ticketArrayData,
       ticketBuyer: userdata.userId,
     };
-    console.log('userdata',userdata)
+    console.log('userdata', userdata)
 
     const resSendData = await axiosPatch(`payment/ticket_borrow?ticketTableId=${seriesId}`, dataPayload)
-    console.log('Ticket borrow :',resSendData)
-    if(!resSendData){
-      console.log('resSendData :',resSendData)
+    console.log('Ticket borrow :', resSendData)
+    if (!resSendData) {
+      console.log('resSendData :', resSendData)
       Toast.show('Somethink went wrong')
 
     }
@@ -131,10 +131,10 @@ export default function AllTickets_Page({ route }) {
 
     // }
     // if(resSendData.status === 404){
-      
+
     // }
     // if(resSendData.status === 500){
-      
+
     // }
 
     const data = {
@@ -144,38 +144,59 @@ export default function AllTickets_Page({ route }) {
       // phone: userdata.phoneNo,
       phone: "9733492348",
     };
-
     const result = razerPayGetter(data);
     RazorpayCheckout.open(result)
       .then((data) => {
         // console.log('Data :::::::-', data)
         if (data.razorpay_payment_id) {
           Toast.show("Payment Sucessfull")
-          after_payment(data.razorpay_payment_id,resSendData)
+          after_payment(data.razorpay_payment_id, resSendData)
           // console.log("razorpay_payment_id-------------", data.razorpay_payment_id)
         }
       })
       .catch((error) => {
+    
+    
+    
         // console.log("Error:", error);
-        borrow_remove_handler(resSendData)
-        if (error.error) {
-          if (error.error.reason) {
-            Toast.show(error.error.reason)
-          }
-        }
+        // borrow_remove_handler(resSendData)
+        // if (error.error) {
+        //   if (error.error.reason) {
+        //     Toast.show(error.error.reason)
+        //   }
+        // }
+        
+
+        const ticket_in_cart = ticket_add_to_cart()
+        console.log("ticket_in_cart----", ticket_in_cart)
+        api_update_AddToCart(ticket_in_cart)
+
       });
   }
 
-  const borrow_remove_handler =async(resSendData)=>{
+
+  const api_update_AddToCart = async (data) => {
+    try {
+      const userdata = JSON.parse(userDetails)
+      const res = await modifiedAxiosPatch(`cart/cart_update?userId=${userdata.id}`, data)
+      console.log("api_update_AddToCart",res)
+    } catch (error) {
+      console.log("api_update_AddToCart----", error)
+    }
+  }
+
+
+
+  const borrow_remove_handler = async (resSendData) => {
     const dataPayload = {
       freshData: resSendData.data,
       ticketTableId: seriesId,
     };
     //  paymentHandler(dataPayload, seriesId);
     const res = await axiosPatch(`payment/ticket_remove`, dataPayload)
-    console.log('res scscnscnsck 122sdv1 ----',res)
+    console.log('res scscnscnsck 122sdv1 ----', res)
   }
-  const ticketDataMapper=()=>{
+  const ticketDataMapper = () => {
     const userdata = JSON.parse(userDetails)
     const selectedArr = []
     all_tickets.map((item, index) => {
@@ -187,11 +208,22 @@ export default function AllTickets_Page({ route }) {
         })
       }
     })
-
+    return selectedArr;
+  }
+  const ticket_add_to_cart = () => {
+    const selectedArr = []
+    all_tickets.map((item, index) => {
+      if (item.isSelected) {
+        selectedArr.push({
+          ticketNumber: item._id,
+          series: seriesId
+        })
+      }
+    })
     return selectedArr;
   }
 
-  const after_payment = async (razerpayId,resSendData) => {
+  const after_payment = async (razerpayId, resSendData) => {
     // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
     const userdata = JSON.parse(userDetails)
     const ticketArrayData = resSendData;
@@ -232,13 +264,25 @@ export default function AllTickets_Page({ route }) {
       setPrice(res.data.price);
     }
   };
-
   const onRefresh = () => {
     SetRefreshing(true)
     Toast.show("Refreshing...")
     getSeriesData_withoutLoader()
     SetRefreshing(false)
   }
+
+
+  const ticketAddToCart = async () => {
+    try {
+
+
+
+    } catch (error) {
+      console.log("ticketAddToCart.......", error)
+    }
+  }
+
+
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Custom_header back title={header} />
