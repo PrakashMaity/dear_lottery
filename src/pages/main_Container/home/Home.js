@@ -19,11 +19,11 @@ import { myContext } from '../../../helper/context/ContextPage';
 import { rang } from '../../../helper/colorChange/SelectTheme';
 
 export default function Home() {
-  const { setUserDetails, themeColor } = useContext(myContext)
+  const { setUserDetails, themeColor, userAllDetails, setUserAllDetails } = useContext(myContext)
 
   const navigation = useNavigation()
   const [allSeries, SetAllSeries] = useState([])
-  const [myOrderList, SetMyOrderList] = useState([1, 2, 3, 4, 5, 6, 7])
+  const [myOrderList, SetMyOrderList] = useState([])
   const [loader, SetLoader] = useState(false)
   const [refreshing, SetRefreshing] = useState(false)
 
@@ -162,6 +162,18 @@ export default function Home() {
     }
     SetLoader(false)
   }
+  const getCartData = async () => {
+    SetLoader(true)
+    const res = await axiosGet(`cart/get_data?userId=${userAllDetails.userId}`)
+    if (res.response) {
+    } else {
+      SetMyOrderList(res.data.cartTicket)
+    }
+    SetLoader(false)
+  }
+
+
+
   const getAsyncStorageDetails = async () => {
     const fcmtoken = await AsyncStorage.getItem('fcmtoken')
     const isLogin = await AsyncStorage.getItem('isLogin')
@@ -170,11 +182,11 @@ export default function Home() {
 
     const theme = await AsyncStorage.getItem('theme')
 
+    var a = JSON.parse(userDetails)
+
+    setUserAllDetails(a)
 
     setUserDetails(userDetails)
-
-
-
     // console.log("fcmtoken----", fcmtoken)
     // console.log("isLogin----", isLogin)
     // console.log("userDetails----", userDetails)
@@ -184,6 +196,7 @@ export default function Home() {
   useEffect(() => {
     getAsyncStorageDetails()
     getSeriesData()
+    getCartData()
   }, [])
   const refresh_home = async () => {
     const res = await axiosGet("ticket/series_get")
@@ -194,10 +207,18 @@ export default function Home() {
     }
     SetLoader(false)
   }
+  const refresh_home_cart = async () => {
+    const res = await axiosGet(`cart/get_data?userId=${userAllDetails.userId}`)
+    if (res.response) {
+    } else {
+      SetMyOrderList(res.data.cartTicket)
+    }
+  }
   const onRefresh = () => {
     SetRefreshing(true)
     Toast.show("Refreshing...")
     refresh_home()
+    refresh_home_cart()
     SetRefreshing(false)
   }
   return (
@@ -261,7 +282,7 @@ export default function Home() {
                   {
                     myOrderList.map((item, index) => (
                       <View key={index} style={{ height: Normalize(24), width: "48%", backgroundColor: Colors.lightpurple, borderRadius: Normalize(8), elevation: Normalize(1), marginBottom: Normalize(8), justifyContent: "center", alignItems: "center", paddingHorizontal: Normalize(6) }} >
-                        <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >11 d 504 000 410</Text>
+                        <Text numberOfLines={1} style={{ fontSize: Normalize(11.5), color: Colors.purple, fontFamily: "Outfit-Medium" }} >{item.ticketNumber}</Text>
                       </View>
                     ))
                   }
