@@ -43,7 +43,7 @@ export default function IntroPage() {
 
     const loginFunc = async () => {
         const fcmToken = await AsyncStorage.getItem("fcmtoken")
-        var fcmToken_for_api = ""
+        let fcmToken_for_api = ""
         if (fcmToken != null) {
             fcmToken_for_api = fcmToken
         } else {
