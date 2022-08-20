@@ -113,9 +113,6 @@ export default function Winners() {
                   flex: 1,
                   paddingHorizontal: few_constants.paddingHorizantal,
                   paddingVertical: Normalize(10),
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
                 }}
               >
                 <Fragment>
