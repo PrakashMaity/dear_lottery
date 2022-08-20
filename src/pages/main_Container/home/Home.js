@@ -1,4 +1,5 @@
 import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
+import Lottie from 'lottie-react-native';
 import React, { useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../../constant/StylePage'
@@ -48,6 +49,8 @@ export default function Home() {
     return (
       <View style={{ height: Normalize(100), marginHorizontal: few_constants.paddingHorizantal, marginVertical: Normalize(10), borderRadius: Normalize(8), backgroundColor: Colors.lightpurple, overflow: "hidden", elevation: Normalize(2) }} >
         <Image source={images.home_banner} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
+    
+
       </View>
     )
   }
