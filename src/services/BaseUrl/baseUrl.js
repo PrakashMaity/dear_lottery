@@ -5,4 +5,8 @@ export const baseUrlWithEndPoint = {
     login: baseUrl + 'users/login',
     register: baseUrl + 'users/register',
   },
+  home: {
+    getAllSeries: baseUrl + 'ticket/series_get',
+    getResult: baseUrl + 'result/result_get_all',
+  },
 };
