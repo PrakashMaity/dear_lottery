@@ -1,37 +1,28 @@
-import { View, Text, Linking, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import React, { Fragment, useEffect, useState } from 'react';
-import RazorpayCheckout from 'react-native-razorpay';
 import { Colors } from '../../../constant/Colors';
-import Toast from 'react-native-simple-toast';
 import Custom_header from '../../../helper/Custom_header';
 import { few_constants } from '../../../constant/small_constant/Few_Constants';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { globalStyles } from '../../../constant/StylePage';
-import { modifiedAxiosGet } from '../../../http/axios/CustomAxiosCall';
 import { getDate, getTime } from '../../../helper/TimeRelatedFunc';
 import LoaderPage from '../../../helper/components/LoaderPage';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
+import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
+import { getAxios } from '../../../services/getData';
 export default function Notice() {
   const [allNotice, setAllNotice] = useState([]);
   const [loader, setLoader] = useState(false);
 
   const getNoticeResult = async () => {
-    try {
-      setLoader(true);
-      const res = await modifiedAxiosGet('notice/notice_get_all');
-      // console.log(res)
-      if (res.status === 200) {
-        // console.log("res : ", res.data.data);
-        setLoader(false);
-        setAllNotice(res.data.data);
-      } else {
-        setLoader(false);
-        console.log('Failed : ', 'Something went Wrong');
-      }
-    } catch (error) {
-      setLoader(false);
-      console.log('getNoticeResult---', error);
+    setLoader(true);
+    const res = await getAxios(baseUrlWithEndPoint.notice.notice);
+    if (res.success) {
+      setAllNotice(res.data.data);
+    } else {
     }
+
+    setLoader(false);
   };
 
   useEffect(() => {

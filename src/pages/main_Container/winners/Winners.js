@@ -6,38 +6,28 @@ import { few_constants } from '../../../constant/small_constant/Few_Constants';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { Colors } from '../../../constant/Colors';
 import { addComma } from '../../../helper/AddComma';
-import { modifiedAxiosGet } from '../../../http/axios/CustomAxiosCall';
 import {
   getDate,
-  getseriesTime,
   whichDay,
 } from '../../../helper/TimeRelatedFunc';
 import LoaderPage from '../../../helper/components/LoaderPage';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
+import { getAxios } from '../../../services/getData';
+import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 
 export default function Winners() {
   const [allWinners, setAllWinners] = useState([]);
   const [loader, setLoader] = useState(false);
-
   const getWinnerResult = async () => {
-    try {
-      setLoader(true);
-      const res = await modifiedAxiosGet('winner/winner_get_all');
-      // console.log(res)
-      if (res.status === 200) {
-        // console.log("res : ", res.data.data);
-        setLoader(false);
-        setAllWinners(res.data.data);
-      } else {
-        setLoader(false);
-        console.log('Failed : ', 'Something went Wrong');
-      }
-    } catch (error) {
-      setLoader(false);
-      console.log('getWinnerResult---', error);
+    setLoader(true);
+    const res = await getAxios(baseUrlWithEndPoint.winner.winner);
+    // console.log(res.data.data);
+    if (res.success) {
+      setAllWinners(res.data.data);
+    } else {
     }
+    setLoader(false);
   };
-
   useEffect(() => {
     getWinnerResult();
   }, []);

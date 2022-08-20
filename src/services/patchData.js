@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const patchData = async (url, data) => {
+export const patchAxios = async (url, data) => {
 	try {
 		const response = await axios.patch(url, data);
 		return {

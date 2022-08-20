@@ -30,13 +30,11 @@ export default function IntroPage() {
       setThemeColor(PurpleShades.Title);
       setAsync('theme', PurpleShades.Title);
     }
-    
-
 
     if (loginDetails == null) {
       navigation.replace('LoginOrSignUp');
     } else {
-        console.log("-----------------------")
+      console.log('-----------------------');
       //   loginFunc();
       introloginFunc();
     }
@@ -70,7 +68,6 @@ export default function IntroPage() {
     console.log('Response ', res);
     if (res.response) {
       if (res.response.status == 404 || res.response.status == 400) {
-        // Toast.show(res.response.data.massage)
       }
     } else {
       const details = await AsyncStorage.getItem('login_details');
@@ -98,8 +95,6 @@ export default function IntroPage() {
     }
   };
   const introloginFunc = async () => {
-
-
     const normal_loginDetails = await AsyncStorage.getItem('login_details');
     const toStringify = JSON.parse(normal_loginDetails);
     const data = {
@@ -109,10 +104,10 @@ export default function IntroPage() {
       fcmToken: await getFcmToken(),
     };
     const res = await postAxios(baseUrlWithEndPoint.auth.login, data);
-   
-    // console.log(res)   
+
+    // console.log(res)
     if (res.success) {
-    //   console.log(res);
+      //   console.log(res);
       storeintroLogindata(res.data);
       navigation.dispatch(
         CommonActions.reset({
@@ -121,14 +116,10 @@ export default function IntroPage() {
         })
       );
     } else {
-        console.log(res.status);
-      if (res.status == 404 || res.status == 400) {
-        Toast.show(res.message.data.massage);
-      }
+      navigation.replace('LoginOrSignUp');
     }
   };
-
-  const storeintroLogindata = async(res) => {
+  const storeintroLogindata = async (res) => {
     const details = await AsyncStorage.getItem('login_details');
     const data = JSON.parse(details);
     const userData = {

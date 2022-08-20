@@ -7,6 +7,15 @@ export const baseUrlWithEndPoint = {
   },
   home: {
     getAllSeries: baseUrl + 'ticket/series_get',
-    getResult: baseUrl + 'result/result_get_all',
+    result: baseUrl + 'result/result_get_all',
+    getAllTickets: baseUrl + 'ticket/ticket_list_get',
+    getAllBookingTickets: baseUrl + 'cart/get_data?userId=',
+    ticket_borrow: baseUrl + 'payment/ticket_borrow?ticketTableId=',
+  },
+  notice: {
+    notice: baseUrl + 'notice/notice_get_all',
+  },
+  winner: {
+    winner: baseUrl + 'winner/winner_get_all',
   },
 };

@@ -34,6 +34,7 @@ import {
   baseUrl,
   baseUrlWithEndPoint,
 } from '../../../services/BaseUrl/baseUrl';
+import axios from 'axios';
 
 export default function Home() {
   const { setUserDetails, themeColor, userAllDetails, setUserAllDetails } =
@@ -451,9 +452,7 @@ export default function Home() {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-        >
-          {/* <Text style={[globalStyles.planeText_outfit_bold, { color: Colors.purple, fontSize: Normalize(13) }]} > New Update Coming soon </Text> */}
-        </View>
+        ></View>
         <View
           style={{
             height: '100%',
@@ -469,35 +468,20 @@ export default function Home() {
               { color: Colors.purple, fontSize: Normalize(13) },
             ]}
           >
-            {' '}
-            New Update Coming soon{' '}
+            New Update Coming soon
           </Text>
         </View>
-
-        {/* <View style={{ backgroundColor: Colors.red, paddingVertical: Normalize(2), paddingHorizontal: Normalize(4), position: "absolute", top: Normalize(5), right: Normalize(5), borderRadius: Normalize(2), elevation: Normalize(1) }} >
-          <Text style={{ color: Colors.white, fontFamily: "Outfit-Medium", fontSize: Normalize(7) }} >New Update Coming Soon</Text>
-        </View> */}
       </View>
     );
   };
-  const getSeriesData = async () => {
-    SetLoader(true);
+  const getAllSeries = async (val) => {
+    SetLoader(val != undefined ? true : false);
     const res = await getAxios(baseUrlWithEndPoint.home.getAllSeries);
-    if (res.status) {
+    if (res.success) {
       SetAllSeries(res.data.data);
+      SetLoader(false);
     } else {
-    }
-    SetLoader(false);
-  };
-  const getCartData = async () => {
-    SetLoader(true);
-    const res = await getAxios(
-      `${baseUrl}cart/get_data?userId=${userAllDetails.userId}`
-    );
-    console.log(res);
-    if (res.status) {
-      SetMyOrderList(res.data.data.cartTicket);
-    } else {
+      SetLoader(false);
     }
     SetLoader(false);
   };
@@ -522,31 +506,29 @@ export default function Home() {
   };
   useEffect(() => {
     getAsyncStorageDetails();
-    getSeriesData();
-    getCartData();
+    getAllSeries('withLoader');
+    getMybookingList('withLoader');
   }, []);
-  const refresh_seriesList = async () => {
-    const res = await getAxios(baseUrlWithEndPoint.home.getAllSeries);
-    if (res.status) {
-      SetAllSeries(res.data.data);
-    } else {
-    }
-  };
-  const refreshGetCartData = async () => {
+  const getMybookingList = async (val) => {
+    SetLoader(val != undefined ? true : false);
     const res = await getAxios(
-      `${baseUrl}cart/get_data?userId=${userAllDetails.userId}`
+      baseUrlWithEndPoint.home.getAllBookingTickets + userAllDetails.userId
     );
-    console.log(res);
-    if (res.status) {
-      SetMyOrderList(res.data.data.cartTicket);
+    if (res.success) {
+      console.log(res.data.data[0].cartTicket);
+      SetMyOrderList(res.data.data);
+      SetLoader(false);
     } else {
+      console.log(res.status);
+      SetLoader(false);
     }
+    SetLoader(false);
   };
   const onRefresh = () => {
     SetRefreshing(true);
     Toast.show('Refreshing...');
-    refresh_seriesList();
-    refreshGetCartData();
+    getAllSeries();
+    getMybookingList();
     SetRefreshing(false);
   };
   return (

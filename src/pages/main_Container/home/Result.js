@@ -21,9 +21,9 @@ export default function Result() {
   };
   const getWinnerResult = async () => {
     setLoader(true);
-    const res = await getAxios(baseUrlWithEndPoint.home.getResult);
+    const res = await getAxios(baseUrlWithEndPoint.home.result);
     let newArr = [];
-    if (res.status) {
+    if (res.success) {
       res.data.data.map((item, index) => {
         item.uri = item.result;
         newArr.push(item);

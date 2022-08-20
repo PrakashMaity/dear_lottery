@@ -45,7 +45,7 @@ export default function AllTickets_Page({ route }) {
   const [seriesId, setSeriesId] = useState('');
   const [refreshing, SetRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
-  const userdata = JSON.parse(userDetails);
+
   const isSeleted_ticket = (val) => {
     if (val.isAlreadyBuy) {
       return [styles.sold_Ticket_box, styles.sold_Ticket_num];
@@ -80,44 +80,43 @@ export default function AllTickets_Page({ route }) {
     });
     return total;
   };
-  const getSeriesData = async (val) => {
-
-    console.log(val)
-
-    setLoader(val != undefined ? true : false);
+  const getSeriesData = async () => {
+    setLoader(true);
     const data = {
       params: {
         seriesId: id,
       },
     };
+
     const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
 
-    if (res.success) {
-      console.log(res.data.data.numberList);
+    // console.log(res.data.data._id);
 
+    if (res.success) {
       setSeriesId(res.data.data._id);
-      var newarr = [];
+      let newarr = [];
       res.data.data.numberList.map((item) => {
         item.isSelected = false;
+        // console.log(item)
         newarr.push(item);
       });
       setAll_tickets(newarr);
       setPrice(res.data.data.price);
     } else {
-      console.log(res.message);
     }
     setLoader(false);
   };
 
+  
+
   useEffect(() => {
-    getSeriesData("withloader");
+    getSeriesData();
   }, [id]);
 
-  const onPress_buy = async () => {
-    // let userdata = JSON.parse(userDetails);
+  const onPress_buy_old = async () => {
+    const userdata = JSON.parse(userDetails);
     const ticketArrayData = ticketDataMapper();
-
-    console.log('ticketArrayData ', ticketArrayData);
+    // console.log('ticketArrayData ', ticketArrayData);
 
     const dataPayload = {
       ticketData: ticketArrayData,
@@ -138,9 +137,9 @@ export default function AllTickets_Page({ route }) {
     const data = {
       amount: '100',
       name: userdata.name,
-      email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
-      phone: userdata.phoneNo,
-      // phone: '9733492348',
+      email: userdata.email,
+      // phone: userdata.phoneNo,
+      phone: '9733492348',
     };
     const result = razerPayGetter(data);
     RazorpayCheckout.open(result)
@@ -177,14 +176,8 @@ export default function AllTickets_Page({ route }) {
         // console.log("ticket_in_cart----", ticket_in_cart);
       });
   };
-  const dataSendToRazerPay = {
-    amount: '100',
-    name: userdata.name,
-    email: userdata.email,
-    // phone: userdata.phoneNo,
-    phone: '9733492348',
-  };
-  const onPress_buy_new = async () => {
+  const onPress_buy = async () => {
+    const userdata = JSON.parse(userDetails);
     const ticketArrayData = ticketDataMapper();
     // console.log('ticketArrayData ', ticketArrayData);
 
@@ -192,20 +185,21 @@ export default function AllTickets_Page({ route }) {
       ticketData: ticketArrayData,
       ticketBuyer: userdata.userId,
     };
-    const borrowResponse = await patchAxios(
+    const res = await patchAxios(
       baseUrlWithEndPoint.home.ticket_borrow + seriesId,
       dataPayload
     );
-    if (borrowResponse.success) {
-      console.log('Ticket borrow :', borrowResponse.data.data);
 
-      const result = razerPayGetter(dataSendToRazerPay);
+    if (res.success) {
+      console.log('Ticket borrow :', res.data.data);
     } else {
     }
+    
   };
 
   const api_update_AddToCart = async (data) => {
     try {
+      const userdata = JSON.parse(userDetails);
       const dataPayload = {
         cartTicket: data,
       };
@@ -228,6 +222,7 @@ export default function AllTickets_Page({ route }) {
     console.log('res scscnscnsck 122sdv1 ----', res);
   };
   const ticketDataMapper = () => {
+    const userdata = JSON.parse(userDetails);
     const selectedArr = [];
     all_tickets.map((item, index) => {
       if (item.isSelected) {
@@ -255,12 +250,12 @@ export default function AllTickets_Page({ route }) {
 
   const after_payment = async (razerpayId, resSendData) => {
     // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
+    const userdata = JSON.parse(userDetails);
     const ticketArrayData = resSendData;
     const dataPayload = {
       ticketData: ticketArrayData.data,
       razerpay: razerpayId,
       ticketBuyer: userdata.userId,
-      amount: '100',
     };
     //  paymentHandler(dataPayload, seriesId);
     const res = await axiosPatch(
@@ -273,13 +268,34 @@ export default function AllTickets_Page({ route }) {
     } else {
       console.log(res);
       Toast.show(res.massage);
-      getSeriesData();
+      getSeriesData_withoutLoader();
+    }
+  };
+
+  const getSeriesData_withoutLoader = async () => {
+    const data = {
+      params: {
+        seriesId: id,
+      },
+    };
+
+    const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
+    if (res.success) {
+      setSeriesId(res.data.data._id);
+      var newarr = [];
+      res.data.data.numberList.map((item) => {
+        item.isSelected = false;
+        newarr.push(item);
+      });
+      setAll_tickets(newarr);
+      setPrice(res.data.data.price);
+    } else {
     }
   };
   const onRefresh = () => {
     SetRefreshing(true);
     Toast.show('Refreshing...');
-    getSeriesData()
+    getSeriesData_withoutLoader();
     SetRefreshing(false);
   };
 

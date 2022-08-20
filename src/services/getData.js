@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-export const getAxios = async (url) => {
+export const getAxios = async (url,data) => {
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(url,data);
+
     return { success: true, status: response.status, data: response.data };
   } catch (error) {
     if (error.response)
