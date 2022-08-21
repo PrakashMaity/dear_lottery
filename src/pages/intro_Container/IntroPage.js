@@ -13,6 +13,7 @@ import { axiosPost } from '../../http/axios/CustomAxiosCall';
 import { getFcmToken } from '../../services/FcmToken/getFcmToken';
 import { baseUrlWithEndPoint } from '../../services/BaseUrl/baseUrl';
 import { postAxios } from '../../services/postData';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 export default function IntroPage() {
   const { themeColor, setThemeColor } = useContext(myContext);
   const navigation = useNavigation();
@@ -34,7 +35,7 @@ export default function IntroPage() {
     if (loginDetails == null) {
       navigation.replace('LoginOrSignUp');
     } else {
-      console.log('-----------------------');
+      // console.log('-----------------------');
       //   loginFunc();
       introloginFunc();
     }
@@ -144,12 +145,22 @@ export default function IntroPage() {
         { justifyContent: 'center', alignItems: 'center' },
       ]}
     >
-      <View style={{ height: Normalize(260), width: Normalize(260) }}>
+      <View style={{ height: Normalize(200), width: Normalize(200),justifyContent:"center",alignItems:"center" }}>
         <Image
-          source={images.splash}
+          source={images.applogo}
           style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
         />
       </View>
+      <Text style={globalStyles.pageHeaderText} >Welcome to Lotty Game</Text>
+      <Text style={[globalStyles.planeText_outfit_Medium,{color:Colors.blue}]} >since 2022</Text>
+   
+      <View style={{ height: Normalize(60), width: Normalize(60),justifyContent:"center",alignItems:"center",position:"absolute" ,bottom:Normalize(15),right:Normalize(15)}}>
+        <Image
+          source={images.madeInIndia}
+          style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
+        />
+      </View>
+   
     </View>
   );
 }

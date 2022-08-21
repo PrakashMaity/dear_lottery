@@ -6,4 +6,6 @@ export const images={
     ticket:require("../../assets/t4.png"),
     splash:require("../../assets/splash.png"),
     whatsapp:require("../../assets/whatsapp-logo.png"),
+    applogo:require("../../assets/lottery.png"),
+    madeInIndia:require("../../assets/madeInIndia.png"),
 }

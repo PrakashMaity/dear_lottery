@@ -6,18 +6,28 @@ import { few_constants } from '../../../constant/small_constant/Few_Constants';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { Colors } from '../../../constant/Colors';
 import { addComma } from '../../../helper/AddComma';
-import {
-  getDate,
-  whichDay,
-} from '../../../helper/TimeRelatedFunc';
+import { getDate, whichDay } from '../../../helper/TimeRelatedFunc';
 import LoaderPage from '../../../helper/components/LoaderPage';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
+import ServerErrorModel from '../../../commonModel/ServerErrorModel';
+import NotFoundModel from '../../../commonModel/NotFoundModel';
 
 export default function Winners() {
   const [allWinners, setAllWinners] = useState([]);
   const [loader, setLoader] = useState(false);
+
+  const [notfoundModal, SetNotfoundModal] = useState(false);
+  const [serverErrorModal, SetServerErrorModal] = useState(false);
+
+  const notFoundModalOpenClose = () => {
+    SetNotfoundModal(!notfoundModal);
+  };
+  const serverErrorModalOpenClose = () => {
+    SetServerErrorModal(!serverErrorModal);
+  };
+
   const getWinnerResult = async () => {
     setLoader(true);
     const res = await getAxios(baseUrlWithEndPoint.winner.winner);
@@ -25,6 +35,12 @@ export default function Winners() {
     if (res.success) {
       setAllWinners(res.data.data);
     } else {
+      setLoader(false);
+      if (res.status > 399 && res.status < 500) {
+        // notFoundModalOpenClose();
+      } else if (res.status > 499 && res.status < 600) {
+        serverErrorModalOpenClose();
+      }
     }
     setLoader(false);
   };
@@ -113,6 +129,18 @@ export default function Winners() {
                   ))}
                 </Fragment>
               </View>
+              {notfoundModal && (
+                <NotFoundModel
+                  modelOpen={notfoundModal}
+                  onRequestClose={notFoundModalOpenClose}
+                />
+              )}
+              {serverErrorModal && (
+                <ServerErrorModel
+                  modelOpen={serverErrorModal}
+                  onRequestClose={serverErrorModalOpenClose}
+                />
+              )}
             </ScrollView>
           )}
         </Fragment>

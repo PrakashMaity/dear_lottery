@@ -1,5 +1,14 @@
-import { View, Text, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+// AwesomeProject
+import {
+  View,
+  Text,
+  StatusBar,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../../constant/StylePage';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
@@ -11,6 +20,7 @@ import { addComma } from '../../../helper/AddComma';
 import { useNavigation } from '@react-navigation/native';
 import { axiosGet } from '../../../http/axios/CustomAxiosCall';
 import {
+  getDate,
   getseriesTime,
   todayDate,
   whichDay,
@@ -27,6 +37,9 @@ import {
   baseUrlWithEndPoint,
 } from '../../../services/BaseUrl/baseUrl';
 import axios from 'axios';
+import NotFoundModel from '../../../commonModel/NotFoundModel';
+import ServerErrorModel from '../../../commonModel/ServerErrorModel';
+import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 
 export default function Home() {
   const { setUserDetails, themeColor, userAllDetails, setUserAllDetails } =
@@ -35,8 +48,17 @@ export default function Home() {
   const navigation = useNavigation();
   const [allSeries, SetAllSeries] = useState([]);
   const [myOrderList, SetMyOrderList] = useState([]);
-  const [loader, SetLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [refreshing, SetRefreshing] = useState(false);
+  const [notfoundModal, SetNotfoundModal] = useState(false);
+  const [serverErrorModal, SetServerErrorModal] = useState(false);
+
+  const notFoundModalOpenClose = () => {
+    SetNotfoundModal(!notfoundModal);
+  };
+  const serverErrorModalOpenClose = () => {
+    SetServerErrorModal(!serverErrorModal);
+  };
 
   useEffect(() => {
     notificationListner(navigation);
@@ -55,15 +77,33 @@ export default function Home() {
         }}
       >
         <StatusBar backgroundColor={Colors.purple} barStyle={'light-content'} />
-        <Text
-          numberOfLines={1}
-          style={[
-            globalStyles.planeText_outfit_Medium,
-            { width: '70%', letterSpacing: 1 },
-          ]}
+
+        <View
+          style={{ flexDirection: 'row', height: '100%', alignItems: 'center' }}
         >
-          Lottery shop <Text style={{ fontSize: Normalize(11) }}>(24*7)</Text>
-        </Text>
+          <View
+            style={{
+              height: Normalize(25),
+              width: Normalize(25),
+              marginRight: Normalize(5),
+            }}
+          >
+            <Image source={images.applogo}
+            style={{height:"100%",width:"100%",resizeMode:"contain"}}
+            />
+          </View>
+
+          <Text
+            numberOfLines={1}
+            style={[
+              globalStyles.planeText_outfit_Medium,
+              { width: '70%', letterSpacing: 1 },
+            ]}
+          >
+            Lotty Game
+          </Text>
+        </View>
+
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <MaterialCommunityIcons
@@ -79,8 +119,21 @@ export default function Home() {
   };
   const Home_banner = () => {
     return (
-      <View style={{ height: Normalize(100), marginHorizontal: few_constants.paddingHorizantal, marginVertical: Normalize(10), borderRadius: Normalize(8), backgroundColor: Colors.lightpurple, overflow: "hidden", elevation: Normalize(2) }} >
-        <Image source={images.home_banner} style={{ height: "100%", width: "100%", resizeMode: "cover" }} />
+      <View
+        style={{
+          height: Normalize(100),
+          marginHorizontal: few_constants.paddingHorizantal,
+          marginVertical: Normalize(10),
+          borderRadius: Normalize(8),
+          backgroundColor: Colors.lightpurple,
+          overflow: 'hidden',
+          elevation: Normalize(2),
+        }}
+      >
+        <Image
+          source={images.home_banner}
+          style={{ height: '100%', width: '100%', resizeMode: 'cover' }}
+        />
       </View>
     );
   };
@@ -454,15 +507,20 @@ export default function Home() {
     );
   };
   const getAllSeries = async (val) => {
-    SetLoader(val != undefined ? true : false);
+    setLoader(val != undefined ? true : false);
     const res = await getAxios(baseUrlWithEndPoint.home.getAllSeries);
     if (res.success) {
       SetAllSeries(res.data.data);
-      SetLoader(false);
+      setLoader(false);
     } else {
-      SetLoader(false);
+      setLoader(false);
+      if (res.status > 399 && res.status < 500) {
+        // notFoundModalOpenClose();
+      } else if (res.status > 499 && res.status < 600) {
+        serverErrorModalOpenClose();
+      }
     }
-    SetLoader(false);
+    setLoader(false);
   };
   const getAsyncStorageDetails = async () => {
     const fcmtoken = await AsyncStorage.getItem('fcmtoken');
@@ -489,19 +547,20 @@ export default function Home() {
     getMybookingList('withLoader');
   }, []);
   const getMybookingList = async (val) => {
-    SetLoader(val != undefined ? true : false);
+    setLoader(val != undefined ? true : false);
     const res = await getAxios(
       baseUrlWithEndPoint.home.getAllBookingTickets + userAllDetails.userId
     );
     if (res.success) {
-      console.log(res.data.data[0].cartTicket);
+      // console.log(res.data.data[0].cartTicket);
       SetMyOrderList(res.data.data);
-      SetLoader(false);
+
+      setLoader(false);
     } else {
       console.log(res.status);
-      SetLoader(false);
+      setLoader(false);
     }
-    SetLoader(false);
+    setLoader(false);
   };
   const onRefresh = () => {
     SetRefreshing(true);
@@ -510,6 +569,15 @@ export default function Home() {
     getMybookingList();
     SetRefreshing(false);
   };
+
+  const isTicket = (val) => {
+    if (val == null || val == undefined || val.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Home_header />
@@ -528,11 +596,18 @@ export default function Home() {
           {/* result and notice */}
           <Result_notice />
           {/* tickets */}
-
-          {/* <TouchableOpacity
-              style={{ height: 100, width: "100%", backgroundColor: rang().deep }} >
-            </TouchableOpacity> */}
-
+          {notfoundModal && (
+            <NotFoundModel
+              modelOpen={notfoundModal}
+              onRequestClose={notFoundModalOpenClose}
+            />
+          )}
+          {serverErrorModal && (
+            <ServerErrorModel
+              modelOpen={serverErrorModal}
+              onRequestClose={serverErrorModalOpenClose}
+            />
+          )}
           <View style={{ padding: few_constants.paddingHorizantal }}>
             <Text
               style={[
@@ -566,56 +641,76 @@ export default function Home() {
               </View>
             )}
             {/* My order */}
-            {myOrderList.length > 0 && (
+
+            <Text
+              style={[
+                globalStyles.planeText_outfit_bold,
+                {
+                  color: Colors.purple,
+                  paddingVertical: few_constants.paddingHorizantal,
+                },
+              ]}
+            >
+              My Order
+            </Text>
+
+            {myOrderList.length > 0 ? (
               <View>
-                <Text
-                  style={[
-                    globalStyles.planeText_outfit_bold,
-                    {
-                      color: Colors.purple,
-                      paddingVertical: few_constants.paddingHorizantal,
-                    },
-                  ]}
-                >
-                  My Order
-                </Text>
-                <View
-                  style={{
-                    flexWrap: 'wrap',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  {myOrderList.map((item, index) => (
-                    <View
-                      key={index}
+                {myOrderList.map((item, index) => (
+                  <View key={index} style={{ marginBottom: Normalize(6) }}>
+                    <Text
+                      onPress={() => console.log(item)}
+                      numberOfLines={1}
                       style={{
-                        height: Normalize(24),
-                        width: '48%',
-                        backgroundColor: Colors.lightpurple,
-                        borderRadius: Normalize(8),
-                        elevation: Normalize(1),
-                        marginBottom: Normalize(8),
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingHorizontal: Normalize(6),
+                        fontSize: Normalize(11.5),
+                        color: Colors.purple,
+                        fontFamily: 'Outfit-Medium',
+                        marginBottom: Normalize(6),
                       }}
                     >
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          fontSize: Normalize(11.5),
-                          color: Colors.purple,
-                          fontFamily: 'Outfit-Medium',
-                        }}
-                      >
-                        {item.ticketNumber}
-                      </Text>
+                      {getDate(item.createdAt)}
+                    </Text>
+                    <View
+                      style={{
+                        flexWrap: 'wrap',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {isTicket(item.cartTicket) &&
+                        item.cartTicket.map((childitem, childindex) => (
+                          <View
+                            key={childindex}
+                            style={{
+                              height: Normalize(24),
+                              width: '48%',
+                              backgroundColor: Colors.lightpurple,
+                              borderRadius: Normalize(8),
+                              elevation: Normalize(1),
+                              marginBottom: Normalize(8),
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              paddingHorizontal: Normalize(6),
+                            }}
+                          >
+                            <Text
+                              numberOfLines={1}
+                              style={[
+                                globalStyles.planeText_outfit_Medium,
+                                { color: Colors.purple2 },
+                              ]}
+                            >
+                              {childitem.ticketNumber}
+                            </Text>
+                          </View>
+                        ))}
                     </View>
-                  ))}
-                </View>
+                  </View>
+                ))}
               </View>
+            ) : (
+              <EmptyScreen />
             )}
           </View>
         </ScrollView>

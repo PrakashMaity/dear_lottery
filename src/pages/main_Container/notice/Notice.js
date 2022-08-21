@@ -10,18 +10,33 @@ import LoaderPage from '../../../helper/components/LoaderPage';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 import { getAxios } from '../../../services/getData';
+import NotFoundModel from '../../../commonModel/NotFoundModel';
+import ServerErrorModel from '../../../commonModel/ServerErrorModel';
 export default function Notice() {
   const [allNotice, setAllNotice] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [notfoundModal, SetNotfoundModal] = useState(false);
+  const [serverErrorModal, SetServerErrorModal] = useState(false);
 
+  const notFoundModalOpenClose = () => {
+    SetNotfoundModal(!notfoundModal);
+  };
+  const serverErrorModalOpenClose = () => {
+    SetServerErrorModal(!serverErrorModal);
+  };
   const getNoticeResult = async () => {
     setLoader(true);
     const res = await getAxios(baseUrlWithEndPoint.notice.notice);
     if (res.success) {
       setAllNotice(res.data.data);
     } else {
+      setLoader(false);
+      if (res.status > 399 && res.status < 500) {
+        // notFoundModalOpenClose();
+      } else if (res.status > 499 && res.status < 600) {
+        serverErrorModalOpenClose();
+      }
     }
-
     setLoader(false);
   };
 
@@ -112,6 +127,19 @@ export default function Notice() {
                       </View>
                     </View>
                   ))}
+
+                  {notfoundModal && (
+                    <NotFoundModel
+                      modelOpen={notfoundModal}
+                      onRequestClose={notFoundModalOpenClose}
+                    />
+                  )}
+                  {serverErrorModal && (
+                    <ServerErrorModel
+                      modelOpen={serverErrorModal}
+                      onRequestClose={serverErrorModalOpenClose}
+                    />
+                  )}
                 </View>
               </ScrollView>
             </Fragment>

@@ -81,8 +81,7 @@ export default function AllTickets_Page({ route }) {
     return total;
   };
   const getSeriesData = async (val) => {
-
-    console.log(val)
+    console.log(val);
 
     setLoader(val != undefined ? true : false);
     const data = {
@@ -110,7 +109,7 @@ export default function AllTickets_Page({ route }) {
   };
 
   useEffect(() => {
-    getSeriesData("withloader");
+    getSeriesData('withloader');
   }, [id]);
 
   const onPress_buy = async () => {
@@ -208,6 +207,7 @@ export default function AllTickets_Page({ route }) {
     try {
       const dataPayload = {
         cartTicket: data,
+        amount: calculateAmount(),
       };
       const res = await modifiedAxiosPatch(
         `cart/cart_update?userId=${userdata.userId}`,
@@ -260,7 +260,7 @@ export default function AllTickets_Page({ route }) {
       ticketData: ticketArrayData.data,
       razerpay: razerpayId,
       ticketBuyer: userdata.userId,
-      amount: '100',
+      amount: calculateAmount(),
     };
     //  paymentHandler(dataPayload, seriesId);
     const res = await axiosPatch(
@@ -279,7 +279,7 @@ export default function AllTickets_Page({ route }) {
   const onRefresh = () => {
     SetRefreshing(true);
     Toast.show('Refreshing...');
-    getSeriesData()
+    getSeriesData();
     SetRefreshing(false);
   };
 
@@ -290,6 +290,10 @@ export default function AllTickets_Page({ route }) {
     }
   };
 
+  const calculateAmount = (val) => {
+    let a = countTIcket() * price * 100;
+    return a.toString();
+  };
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Custom_header back title={header} />
