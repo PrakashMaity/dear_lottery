@@ -43,9 +43,9 @@ const App = () => {
     return () => removeNetInfoSubscription();
   }, []);
 
-  // useEffect(() => {
-  //   otaUpdateHandler();
-  // }, []);
+  useEffect(() => {
+    otaUpdateHandler();
+  }, []);
 
   console.log('Connection state :-', isOffline);
   return (
