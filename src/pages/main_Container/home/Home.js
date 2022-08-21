@@ -88,8 +88,9 @@ export default function Home() {
               marginRight: Normalize(5),
             }}
           >
-            <Image source={images.applogo}
-            style={{height:"100%",width:"100%",resizeMode:"contain"}}
+            <Image
+              source={images.applogo}
+              style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
             />
           </View>
 
@@ -548,9 +549,15 @@ export default function Home() {
   }, []);
   const getMybookingList = async (val) => {
     setLoader(val != undefined ? true : false);
+
+    const userDetails = await AsyncStorage.getItem('userDetails');
+    var a = JSON.parse(userDetails);
+
+
     const res = await getAxios(
-      baseUrlWithEndPoint.home.getAllBookingTickets + userAllDetails.userId
+      baseUrlWithEndPoint.home.getAllBookingTickets + a.userId
     );
+    console.log('++++------+++++', res);
     if (res.success) {
       // console.log(res.data.data[0].cartTicket);
       SetMyOrderList(res.data.data);
