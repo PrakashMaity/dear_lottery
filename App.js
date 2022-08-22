@@ -10,7 +10,11 @@ let codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
 
 const otaUpdateHandler = () => {
   codePush.sync({
-    updateDialog: true,
+    updateDialog: {
+      appendReleaseDescription: true,
+      title: 'a new update is available!',
+    },
+
     installMode: codePush.InstallMode.IMMEDIATE,
   });
 };
@@ -22,8 +26,13 @@ const NoInternetModal = ({ show, onRetry, isRetrying }) => (
     animationInTiming={600}
   >
     <View style={styles.modalContainer}>
-    <Lottie style={{width:100}} source={require('./assets/animation/noconnection.json')} autoPlay loop />
-   
+      <Lottie
+        style={{ width: 100 }}
+        source={require('./assets/animation/noconnection.json')}
+        autoPlay
+        loop
+      />
+
       <Text style={styles.modalTitle}>Connection Error</Text>
       <Text style={styles.modalText}>
         Oops! Looks like your device is not connected to the Internet.
@@ -52,8 +61,8 @@ const App = () => {
     <ContextApi>
       <NoInternetModal
         show={isOffline}
-        onRetry={()=>{}}
-        isRetrying={()=>{}}
+        onRetry={() => {}}
+        isRetrying={() => {}}
       />
       <Stack_navigation />
     </ContextApi>
