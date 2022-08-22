@@ -151,7 +151,7 @@ export default function IntroPage() {
           style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
         />
       </View>
-      <Text style={globalStyles.pageHeaderText} >Welcome to Lotty Game</Text>
+      <Text style={globalStyles.pageHeaderText} >Welcome to Lotty Play</Text>
       <Text style={[globalStyles.planeText_outfit_Medium,{color:Colors.blue}]} >since 2022</Text>
    
       <View style={{ height: Normalize(60), width: Normalize(60),justifyContent:"center",alignItems:"center",position:"absolute" ,bottom:Normalize(15),right:Normalize(15)}}>

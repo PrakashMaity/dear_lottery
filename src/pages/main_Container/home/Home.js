@@ -101,7 +101,7 @@ export default function Home() {
               { width: '70%', letterSpacing: 1 },
             ]}
           >
-            Lotty Game
+            Lotty Play
           </Text>
         </View>
 
