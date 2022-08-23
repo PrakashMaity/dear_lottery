@@ -737,7 +737,7 @@ export default function Home() {
                       {isTicket(item.cartTicket) &&
                         item.cartTicket.map(
                           (childitem, childindex) =>
-                            item.series != null && (
+                            childitem.series != null && (
                               <TouchableOpacity
                                 onPress={() => console.log(childitem)}
                                 key={childindex}
@@ -745,9 +745,10 @@ export default function Home() {
                                   // height: Normalize(24),
                                   paddingVertical: Normalize(5),
                                   width: '48%',
-                                  backgroundColor:
-                                    whichColorShade(childitem.series.timeSlot.time),
-                                    
+                                  backgroundColor: whichColorShade(
+                                    childitem.series.timeSlot.time
+                                  ),
+
                                   borderRadius: Normalize(5),
                                   elevation: Normalize(1),
                                   marginBottom: Normalize(8),
