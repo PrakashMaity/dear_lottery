@@ -376,9 +376,22 @@ export default function AllTickets_Page({ route }) {
     let a = countTIcket() * price * 100;
     return a.toString();
   };
+  // console.log(seriesDetails)
+
+  const whichImage = (val) => {
+    switch (val) {
+      case '1 PM':
+        return images.ticketGreen;
+      case '8 PM':
+        return images.ticketViolet;
+      default:
+        return images.ticket;
+    }
+  };
+
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
-      <Custom_header back title={header} />
+      <Custom_header back title={'Tickets'} />
       <GenaralModel
         Content={paymentStageData.content}
         modelOpen={paymentStateModal}
@@ -425,14 +438,13 @@ export default function AllTickets_Page({ route }) {
                       borderRadius: Normalize(10),
                       backgroundColor: Colors.lightpurple,
                       overflow: 'hidden',
-                      elevation: 0.8,
+                      elevation: 0.8,justifyContent:"center",alignItems:"center"
                     }}
                   >
                     <Image
-                      source={images.ticket}
+                      source={whichImage(seriesDetails.time)}
                       style={{
-                        height: '100%',
-                        width: '100%',
+                        height: '75%', width: '75%',
                         resizeMode: 'contain',
                       }}
                     />
@@ -452,8 +464,7 @@ export default function AllTickets_Page({ route }) {
                           color: Colors.blue,
                         }}
                       >
-                        {/* {seriesDetails.seriesName} Ticktes */}
-                        {getDate(seriesDetails.date)}
+                        {seriesDetails.seriesName} Ticktes
                       </Text>
                       <Text
                         style={{
