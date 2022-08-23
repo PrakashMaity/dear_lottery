@@ -230,7 +230,7 @@ export default function AllTickets_Page({ route }) {
           resSendData.data.forEach((element) => {
             cart_iniciator.push({
               ticketNumber: element.ticketNumber,
-              series: seriesId,
+              series: id,
             });
           });
           console.log('cart_iniciator @@@@', cart_iniciator);
