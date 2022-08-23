@@ -101,7 +101,7 @@ export default function Home() {
               { width: '70%', letterSpacing: 1 },
             ]}
           >
-            Lotty Game
+            Lotty Play
           </Text>
         </View>
 
@@ -269,14 +269,14 @@ export default function Home() {
                 letterSpacing: 0.5,
               }}
             >
-              Closing Time :{' '}
+              Game Time :{' '}
               <Text
                 style={{
                   fontFamily: 'Outfit-SemiBold',
                   fontSize: Normalize(11.5),
                 }}
               >
-                {getseriesTime(item.endTime)}
+                {item.timeSlot?.time}
               </Text>
             </Text>
             <View
@@ -640,7 +640,7 @@ export default function Home() {
               </View>
             ) : (
               <View>
-                {[1, 2].map((item, index) => (
+                {[1].map((item, index) => (
                   <View key={index}>
                     <Blank_Ticket_card item={item} />
                   </View>

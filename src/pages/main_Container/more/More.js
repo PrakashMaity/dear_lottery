@@ -19,11 +19,6 @@ export default function More() {
   const morePageData = [
     {
       title: "Setting",
-      isComingSoon: false,
-      navigateTo: () => { }
-    },
-    {
-      title: "Contact us",
       isComingSoon: true,
       navigateTo: () => { }
     },

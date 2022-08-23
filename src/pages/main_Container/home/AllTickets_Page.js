@@ -122,7 +122,7 @@ export default function AllTickets_Page({ route }) {
       ticketData: ticketArrayData,
       ticketBuyer: userdata.userId,
     };
-    console.log('userdata', userdata);
+    console.log('userdata', dataPayload);
 
     const resSendData = await axiosPatch(
       `payment/ticket_borrow?ticketTableId=${seriesId}`,
@@ -153,7 +153,7 @@ export default function AllTickets_Page({ route }) {
 
           resSendData.data.forEach((element) => {
             cart_iniciator.push({
-              ticketNumber: element._id,
+              ticketNumber: element.ticketNumber,
               series: seriesId,
             });
           });
@@ -235,6 +235,7 @@ export default function AllTickets_Page({ route }) {
           _id: item._id,
           isAlreadyBuy: true,
           userId: userdata.userId,
+          ticketNumber:item.ticketNumber
         });
       }
     });

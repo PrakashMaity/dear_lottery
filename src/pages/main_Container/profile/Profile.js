@@ -128,7 +128,7 @@ export default function Profile() {
                             <Zocial name={"email"} color={Colors.purple} size={Normalize(22)} />
                         </View>
                         <View style={styles.eachTextBox} >
-                            <Text numberOfLines={1} style={styles.eachText} >{userDetails.email != "" ? userDetails.email : "Empty"}</Text>
+                            <Text numberOfLines={1} style={styles.eachText} >{userDetails.email != "" ? userDetails.email : "Email not added"}</Text>
                         </View>
                     </View>
 
@@ -139,7 +139,7 @@ export default function Profile() {
                             <FontAwesome name={"credit-card-alt"} color={Colors.purple} size={Normalize(19)} />
                         </View>
                         <View style={[styles.eachTextBox, { flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }]} >
-                            <Text numberOfLines={1} style={[styles.eachText, {}]} >Add Card or Upi</Text>
+                            <Text numberOfLines={1} style={[styles.eachText, {}]} >Add Balance</Text>
                             <Text style={{ backgroundColor: Colors.red, color: Colors.white, fontSize: Normalize(8), borderRadius: Normalize(4), paddingHorizontal: Normalize(4), paddingVertical: Normalize(2), fontFamily: "Outfit-SemiBold", marginLeft: Normalize(10) }} >Coming Soon</Text>
                         </View>
                     </View>
