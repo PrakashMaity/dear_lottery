@@ -4,6 +4,8 @@ export const images={
     notice:require("../../assets/notice2.jpg"),
     result:require("../../assets/result2.jpg"),
     ticket:require("../../assets/t4.png"),
+    ticketViolet:require("../../assets/ticketViolet.png"),
+    ticketGreen:require("../../assets/ticketGreen.png"),
     splash:require("../../assets/splash.png"),
     whatsapp:require("../../assets/whatsapp-logo.png"),
     applogo:require("../../assets/lottery.png"),

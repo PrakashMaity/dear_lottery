@@ -37,12 +37,20 @@ import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 import { patchAxios } from '../../../services/patchData';
 import GenaralModel from '../../../commonModel/GenarelModal';
+import { getDate } from '../../../helper/TimeRelatedFunc';
+import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 export default function AllTickets_Page({ route }) {
   const { userDetails } = useContext(myContext);
   const { id, header } = route.params;
   const [all_tickets, setAll_tickets] = useState([]);
   const [seriesData, setSeriesData] = useState('');
   const [price, setPrice] = useState('');
+  const [seriesDetails, setSeriesDetails] = useState({
+    seriesName: '',
+    price: '',
+    time: '',
+    date: '',
+  });
   const [seriesId, setSeriesId] = useState('');
   const [refreshing, SetRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -54,7 +62,7 @@ export default function AllTickets_Page({ route }) {
     content: '',
     lottie: '',
     buttonDisable: false,
-    color:'red'
+    color: 'red',
   });
 
   useEffect(() => {
@@ -65,8 +73,7 @@ export default function AllTickets_Page({ route }) {
             'Your payment not done , if your Money deduce then we will refund !',
           lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
           buttonDisable: false,
-    color:'red'
-
+          color: 'red',
         });
         break;
       case 'payment brrow':
@@ -74,8 +81,7 @@ export default function AllTickets_Page({ route }) {
           content: 'Payment Pre-processing ...',
           lottie: require('../../../../assets/animation/start-payment.json'),
           buttonDisable: true,
-    color:'blue'
-
+          color: 'blue',
         });
         break;
       case 'payment after success':
@@ -83,16 +89,14 @@ export default function AllTickets_Page({ route }) {
           content: 'Payment done ,wait for a miniuts...',
           lottie: require('../../../../assets/animation/paymentstart.json'),
           buttonDisable: true,
-    color:'blue'
-
+          color: 'blue',
         });
       case 'payment Done':
         setpaymentStageData({
           content: 'Congatulation , Your payment Successfully done !',
           lottie: require('../../../../assets/animation/paymentcomplete.json'),
           buttonDisable: false,
-    color:'green'
-
+          color: 'green',
         });
         break;
       case 'payment not Done':
@@ -101,8 +105,7 @@ export default function AllTickets_Page({ route }) {
             'Your payment not done , if your Money deduce then we will refund !',
           lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
           buttonDisable: false,
-    color:'red'
-
+          color: 'red',
         });
         break;
       default:
@@ -111,8 +114,7 @@ export default function AllTickets_Page({ route }) {
             'Your payment not done , if your Money deduce then we will refund !',
           lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
           buttonDisable: false,
-    color:'red'
-
+          color: 'red',
         });
     }
   }, [paymentStage]);
@@ -152,8 +154,6 @@ export default function AllTickets_Page({ route }) {
     return total;
   };
   const getSeriesData = async (val) => {
-    console.log(val);
-
     setLoader(val != undefined ? true : false);
     const data = {
       params: {
@@ -163,7 +163,7 @@ export default function AllTickets_Page({ route }) {
     const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
 
     if (res.success) {
-      console.log(res.data.data.numberList);
+      console.log(res.data.data);
 
       setSeriesId(res.data.data._id);
       var newarr = [];
@@ -171,10 +171,16 @@ export default function AllTickets_Page({ route }) {
         item.isSelected = false;
         newarr.push(item);
       });
+      setSeriesDetails({
+        seriesName: res.data.data.series.series,
+        price: res.data.data.series.price,
+        time: res.data.data.time,
+        date: res.data.data.createdAt,
+      });
       setAll_tickets(newarr);
       setPrice(res.data.data.price);
     } else {
-      console.log(res.message);
+      console.log('-----------', res.message);
     }
     setLoader(false);
   };
@@ -194,8 +200,8 @@ export default function AllTickets_Page({ route }) {
       `payment/ticket_borrow?ticketTableId=${seriesId}`,
       dataPayload
     );
-    setPaymentStateModal(true)
-    setPaymentStage('payment brrow')
+    setPaymentStateModal(true);
+    setPaymentStage('payment brrow');
     if (!resSendData) {
       console.log('resSendData :', resSendData);
       Toast.show('Somethink went wrong');
@@ -230,15 +236,14 @@ export default function AllTickets_Page({ route }) {
           console.log('cart_iniciator @@@@', cart_iniciator);
           api_update_AddToCart(cart_iniciator);
           // setPaymentStateModal(true);
-          setTimeout(()=>{
+          setTimeout(() => {
             setPaymentStage('payment Done');
-
-          },2500)
+          }, 2500);
         }
       })
       .catch((error) => {
         console.log('resSendData @@@@', resSendData);
-          setPaymentStateModal(true);
+        setPaymentStateModal(true);
         setPaymentStage('payment not Done');
         // console.log("Error:", error);
         borrow_remove_handler(resSendData);
@@ -447,7 +452,8 @@ export default function AllTickets_Page({ route }) {
                           color: Colors.blue,
                         }}
                       >
-                        5 Series Ticktes
+                        {/* {seriesDetails.seriesName} Ticktes */}
+                        {getDate(seriesDetails.date)}
                       </Text>
                       <Text
                         style={{
@@ -458,14 +464,14 @@ export default function AllTickets_Page({ route }) {
                           letterSpacing: 0.5,
                         }}
                       >
-                        Closing Time :{' '}
+                        Game Time :{' '}
                         <Text
                           style={{
                             fontFamily: 'Outfit-SemiBold',
                             fontSize: Normalize(11.5),
                           }}
                         >
-                          15 pm
+                          {seriesDetails.time}
                         </Text>
                       </Text>
                     </View>
@@ -504,30 +510,41 @@ export default function AllTickets_Page({ route }) {
               {/* tickets numbers */}
               <Text style={[globalStyles.topicHeading]}>Ticket Number :</Text>
 
-              <View
-                style={{
-                  flexWrap: 'wrap',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                {all_tickets.map((item, index) => (
-                  <TouchableOpacity
-                    onPress={() => onpress_ticketNum(item)}
-                    disabled={item.isAlreadyBuy}
-                    key={index}
-                    style={isSeleted_ticket(item)[0]}
-                  >
-                    <Text numberOfLines={1} style={isSeleted_ticket(item)[1]}>
-                      {item.ticketNumber}
-                    </Text>
-                    {item.isAlreadyBuy && (
-                      <Text style={styles.sold_out_text}>Sold out</Text>
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </View>
+              {all_tickets.length >= 1 ? (
+                <View
+                  style={{
+                    flexWrap: 'wrap',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  {all_tickets.map((item, index) => (
+                    <TouchableOpacity
+                      onPress={() => onpress_ticketNum(item)}
+                      disabled={item.isAlreadyBuy}
+                      key={index}
+                      style={isSeleted_ticket(item)[0]}
+                    >
+                      <Text numberOfLines={1} style={isSeleted_ticket(item)[1]}>
+                        {item.ticketNumber}
+                      </Text>
+                      {item.isAlreadyBuy && (
+                        <Text style={styles.sold_out_text}>Sold out</Text>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    marginTop: Normalize(50),
+                  }}
+                >
+                  <EmptyScreen />
+                </View>
+              )}
             </ScrollView>
           </View>
           {/* Buy now  section */}

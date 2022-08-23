@@ -65,7 +65,7 @@ export const notificationListner = (navigation) => {
             if (remoteMessage) {
                 console.log('Notification caused app to open from quit state:', remoteMessage.notification);
             }
-            console.log("remoteMessage................2", remoteMessage)
+            // console.log("remoteMessage................2", remoteMessage)
             if (remoteMessage !== null) {
                 console.log("remoteMessage................", remoteMessage.data.slug);
                 console.log("remoteMessage................1", remoteMessage.data.type);

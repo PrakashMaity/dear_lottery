@@ -219,6 +219,29 @@ export default function Home() {
       </View>
     );
   };
+
+  const whichImage = (val) => {
+    switch (val) {
+      case '1 PM':
+        return images.ticketGreen;
+      case '8 PM':
+        return images.ticketViolet;
+      default:
+        return images.ticket;
+    }
+  };
+  const whichColorShade = (val) => {
+    // val="8 PM"
+    switch (val) {
+      case '1 PM':
+        return Colors.GreenTicketShade;
+      case '8 PM':
+        return Colors.violeteTicketShade;
+      default:
+        return images.ticlightpurpleket;
+    }
+  };
+
   const Ticket_card = ({ item }) => {
     return (
       <View
@@ -242,11 +265,13 @@ export default function Home() {
               backgroundColor: Colors.background_shade2,
               overflow: 'hidden',
               elevation: 0.8,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             <Image
-              source={images.ticket}
-              style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
+              source={whichImage(item.timeSlot.time)}
+              style={{ height: '75%', width: '75%', resizeMode: 'contain' }}
             />
           </View>
           <View style={{ flex: 1, paddingHorizontal: Normalize(8) }}>
@@ -503,10 +528,14 @@ export default function Home() {
           >
             Currently No Game Running !
           </Text>
-          <Text style={[
+          <Text
+            style={[
               globalStyles.planeText_outfit_bold,
               { color: Colors.blue, fontSize: Normalize(10) },
-            ]}>Wait for next Update</Text>
+            ]}
+          >
+            Wait for next Update
+          </Text>
         </View>
       </View>
     );
@@ -514,11 +543,13 @@ export default function Home() {
   const getAllSeries = async (val) => {
     setLoader(val != undefined ? true : false);
     const res = await getAxios(baseUrlWithEndPoint.home.getAllSeries);
+    // console.log(res.data.data)
     if (res.success) {
       SetAllSeries(res.data.data);
       setLoader(false);
     } else {
       setLoader(false);
+      SetAllSeries([])
       if (res.status > 399 && res.status < 500) {
         // notFoundModalOpenClose();
       } else if (res.status > 499 && res.status < 600) {
@@ -557,11 +588,10 @@ export default function Home() {
     const userDetails = await AsyncStorage.getItem('userDetails');
     var a = JSON.parse(userDetails);
 
-
     const res = await getAxios(
       baseUrlWithEndPoint.home.getAllBookingTickets + a.userId
     );
-    console.log('++++------+++++', res);
+    // console.log('++++------+++++', res);
     if (res.success) {
       // console.log(res.data.data[0].cartTicket);
       SetMyOrderList(res.data.data);
@@ -666,7 +696,15 @@ export default function Home() {
             </Text>
 
             {myOrderList.length > 0 ? (
-              <View>
+              <View
+                style={{
+                  padding: Normalize(5),
+                  borderRadius: Normalize(8),
+                  backgroundColor: Colors.lightpurple,
+                  elevation: Normalize(2),
+                  borderRadius: Normalize(8),
+                }}
+              >
                 {myOrderList.map((item, index) => (
                   <View key={index} style={{ marginBottom: Normalize(6) }}>
                     <Text
@@ -674,12 +712,12 @@ export default function Home() {
                       numberOfLines={1}
                       style={{
                         fontSize: Normalize(11.5),
-                        color: Colors.purple,
+                        color: Colors.blue,
                         fontFamily: 'Outfit-Medium',
                         marginBottom: Normalize(6),
                       }}
                     >
-                      {getDate(item.createdAt)}
+                      Ticket of {getDate(item.createdAt)}
                     </Text>
                     <View
                       style={{
@@ -691,17 +729,21 @@ export default function Home() {
                     >
                       {isTicket(item.cartTicket) &&
                         item.cartTicket.map((childitem, childindex) => (
-                          <View
+                          <TouchableOpacity
+                            // onPress={() => console.log(childitem)}
                             key={childindex}
                             style={{
-                              height: Normalize(24),
+                              // height: Normalize(24),
+                              paddingVertical: Normalize(5),
                               width: '48%',
-                              backgroundColor: Colors.lightpurple,
-                              borderRadius: Normalize(8),
+                              backgroundColor: whichColorShade(
+                                childitem.series.timeSlot.time
+                              ),
+                              borderRadius: Normalize(5),
                               elevation: Normalize(1),
                               marginBottom: Normalize(8),
                               justifyContent: 'center',
-                              alignItems: 'center',
+                              // alignItems: 'center',
                               paddingHorizontal: Normalize(6),
                             }}
                           >
@@ -709,12 +751,57 @@ export default function Home() {
                               numberOfLines={1}
                               style={[
                                 globalStyles.planeText_outfit_Medium,
-                                { color: Colors.purple2 },
+                                {
+                                  color: Colors.purple2,
+                                  fontSize: Normalize(10),
+                                },
                               ]}
                             >
-                              {childitem.ticketNumber}
+                              Ticket no :{' '}
+                              <Text
+                                style={{
+                                  fontSize: Normalize(11),
+                                  fontFamily: 'Outfit-SemiBold',
+                                  color: Colors.purple,
+                                }}
+                              >
+                                {childitem.ticketNumber}
+                              </Text>
                             </Text>
-                          </View>
+                            <Text
+                              numberOfLines={1}
+                              style={[
+                                globalStyles.planeText_outfit_Medium,
+                                {
+                                  color: Colors.purple2,
+                                  fontSize: Normalize(10),
+                                  paddingVertical: Normalize(2),
+                                },
+                              ]}
+                            >
+                              {childitem.series.timeSlot.time},{' '}
+                              {childitem.series.series} ticket
+                            </Text>
+                            <Text
+                              numberOfLines={1}
+                              style={[
+                                globalStyles.planeText_outfit_Medium,
+                                {
+                                  color: Colors.green,
+                                  fontSize: Normalize(8),
+                                  textAlign: 'right',
+                                  fontFamily: 'Outfit-Medium',
+                                },
+                              ]}
+                            >
+                              Price : {few_constants.rupee}{' '}
+                              <Text style={{ fontFamily: 'Outfit-SemiBold' }}>
+                                {childitem.series.price}
+                              </Text>
+                            </Text>
+
+                            {/* <View style={{ height: Normalize(25) }}></View> */}
+                          </TouchableOpacity>
                         ))}
                     </View>
                   </View>
