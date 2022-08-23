@@ -199,7 +199,7 @@ export default function Home() {
             >
               {item.title}
             </Text>
-            <View
+            {/* <View
               style={{
                 height: Normalize(10),
                 width: Normalize(10),
@@ -213,7 +213,7 @@ export default function Home() {
                 borderBottomWidth: 1.4,
                 borderRightWidth: 1.4,
               }}
-            ></View>
+            ></View> */}
           </View>
         ))}
       </View>
@@ -446,7 +446,7 @@ export default function Home() {
                       letterSpacing: 0.7,
                     }}
                   >
-                    See All Tickets
+                    Choice you Number
                   </Text>
                 </View>
               </View>
@@ -491,18 +491,22 @@ export default function Home() {
             height: '100%',
             width: '100%',
             position: 'absolute',
-            justifyContent: 'center',
+            // justifyContent: 'center',
             alignItems: 'center',
           }}
         >
           <Text
             style={[
               globalStyles.planeText_outfit_bold,
-              { color: Colors.purple, fontSize: Normalize(13) },
+              { color: Colors.red, fontSize: Normalize(13) },
             ]}
           >
-            New Update Coming soon
+            Currently No Game Running !
           </Text>
+          <Text style={[
+              globalStyles.planeText_outfit_bold,
+              { color: Colors.blue, fontSize: Normalize(10) },
+            ]}>Wait for next Update</Text>
         </View>
       </View>
     );

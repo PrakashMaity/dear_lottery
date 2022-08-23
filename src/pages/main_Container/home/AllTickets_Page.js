@@ -36,6 +36,7 @@ import { myContext } from '../../../helper/context/ContextPage';
 import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 import { patchAxios } from '../../../services/patchData';
+import GenaralModel from '../../../commonModel/GenarelModal';
 export default function AllTickets_Page({ route }) {
   const { userDetails } = useContext(myContext);
   const { id, header } = route.params;
@@ -46,6 +47,76 @@ export default function AllTickets_Page({ route }) {
   const [refreshing, SetRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
   const userdata = JSON.parse(userDetails);
+
+  const [paymentStateModal, setPaymentStateModal] = useState(false);
+  const [paymentStage, setPaymentStage] = useState('no payment');
+  const [paymentStageData, setpaymentStageData] = useState({
+    content: '',
+    lottie: '',
+    buttonDisable: false,
+    color:'red'
+  });
+
+  useEffect(() => {
+    switch (paymentStage) {
+      case 'no payment':
+        setpaymentStageData({
+          content:
+            'Your payment not done , if your Money deduce then we will refund !',
+          lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
+          buttonDisable: false,
+    color:'red'
+
+        });
+        break;
+      case 'payment brrow':
+        setpaymentStageData({
+          content: 'Payment Pre-processing ...',
+          lottie: require('../../../../assets/animation/start-payment.json'),
+          buttonDisable: true,
+    color:'blue'
+
+        });
+        break;
+      case 'payment after success':
+        setpaymentStageData({
+          content: 'Payment done ,wait for a miniuts...',
+          lottie: require('../../../../assets/animation/paymentstart.json'),
+          buttonDisable: true,
+    color:'blue'
+
+        });
+      case 'payment Done':
+        setpaymentStageData({
+          content: 'Congatulation , Your payment Successfully done !',
+          lottie: require('../../../../assets/animation/paymentcomplete.json'),
+          buttonDisable: false,
+    color:'green'
+
+        });
+        break;
+      case 'payment not Done':
+        setpaymentStageData({
+          content:
+            'Your payment not done , if your Money deduce then we will refund !',
+          lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
+          buttonDisable: false,
+    color:'red'
+
+        });
+        break;
+      default:
+        setpaymentStageData({
+          content:
+            'Your payment not done , if your Money deduce then we will refund !',
+          lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
+          buttonDisable: false,
+    color:'red'
+
+        });
+    }
+  }, [paymentStage]);
+
   const isSeleted_ticket = (val) => {
     if (val.isAlreadyBuy) {
       return [styles.sold_Ticket_box, styles.sold_Ticket_num];
@@ -115,23 +186,20 @@ export default function AllTickets_Page({ route }) {
   const onPress_buy = async () => {
     // let userdata = JSON.parse(userDetails);
     const ticketArrayData = ticketDataMapper();
-
-    console.log('ticketArrayData ', ticketArrayData);
-
     const dataPayload = {
       ticketData: ticketArrayData,
       ticketBuyer: userdata.userId,
     };
-    console.log('userdata', dataPayload);
-
     const resSendData = await axiosPatch(
       `payment/ticket_borrow?ticketTableId=${seriesId}`,
       dataPayload
     );
-    console.log('Ticket borrow :', resSendData);
+    setPaymentStateModal(true)
+    setPaymentStage('payment brrow')
     if (!resSendData) {
       console.log('resSendData :', resSendData);
       Toast.show('Somethink went wrong');
+      // setPaymentStage('payment not Done')
     }
 
     const data = {
@@ -148,6 +216,8 @@ export default function AllTickets_Page({ route }) {
         if (data.razorpay_payment_id) {
           Toast.show('Payment Sucessfull');
           after_payment(data.razorpay_payment_id, resSendData);
+          setPaymentStateModal(true);
+          setPaymentStage('payment after success');
           // console.log("razorpay_payment_id-------------", data.razorpay_payment_id)
           let cart_iniciator = [];
 
@@ -159,11 +229,17 @@ export default function AllTickets_Page({ route }) {
           });
           console.log('cart_iniciator @@@@', cart_iniciator);
           api_update_AddToCart(cart_iniciator);
+          // setPaymentStateModal(true);
+          setTimeout(()=>{
+            setPaymentStage('payment Done');
+
+          },2500)
         }
       })
       .catch((error) => {
         console.log('resSendData @@@@', resSendData);
-
+          setPaymentStateModal(true);
+        setPaymentStage('payment not Done');
         // console.log("Error:", error);
         borrow_remove_handler(resSendData);
         if (error.error) {
@@ -235,7 +311,7 @@ export default function AllTickets_Page({ route }) {
           _id: item._id,
           isAlreadyBuy: true,
           userId: userdata.userId,
-          ticketNumber:item.ticketNumber
+          ticketNumber: item.ticketNumber,
         });
       }
     });
@@ -298,7 +374,16 @@ export default function AllTickets_Page({ route }) {
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Custom_header back title={header} />
-
+      <GenaralModel
+        Content={paymentStageData.content}
+        modelOpen={paymentStateModal}
+        animationFile={paymentStageData.lottie}
+        onRequestClose={() => {
+          setPaymentStateModal(false);
+        }}
+        buttonDisable={paymentStageData.buttonDisable}
+        color={paymentStageData.color}
+      />
       {loader ? (
         <LoaderPage />
       ) : (
