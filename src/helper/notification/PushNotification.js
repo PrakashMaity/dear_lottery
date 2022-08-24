@@ -22,7 +22,7 @@ export const requestUserPermission = async () => {
 const GetFCMToken = async () => {
     try {
         let fcmtoken = await AsyncStorage.getItem("fcmtoken")
-        console.log("old token", fcmtoken)
+        // console.log("old token", fcmtoken)
         if (fcmtoken === null) {
             const newFCMToken = await messaging().getToken();
             console.log("newFCMToken..................", newFCMToken)

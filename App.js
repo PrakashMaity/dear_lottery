@@ -56,7 +56,7 @@ const App = () => {
     otaUpdateHandler();
   }, []);
 
-  console.log('Connection state :-', isOffline);
+  console.log('Connection state :-', !isOffline);
   return (
     <ContextApi>
       <NoInternetModal

@@ -163,7 +163,7 @@ export default function AllTickets_Page({ route }) {
     const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
 
     if (res.success) {
-      console.log(res.data.data);
+      // console.log(res.data.data);
 
       setSeriesId(res.data.data._id);
       var newarr = [];

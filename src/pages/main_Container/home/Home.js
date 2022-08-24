@@ -219,7 +219,6 @@ export default function Home() {
       </View>
     );
   };
-
   const whichImage = (val) => {
     switch (val) {
       case '1 PM':
