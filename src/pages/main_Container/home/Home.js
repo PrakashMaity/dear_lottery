@@ -8,7 +8,7 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../../constant/StylePage';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
@@ -19,6 +19,8 @@ import { images } from '../../../constant/Images';
 import { addComma } from '../../../helper/AddComma';
 import { useNavigation } from '@react-navigation/native';
 import { axiosGet } from '../../../http/axios/CustomAxiosCall';
+import Lottie from 'lottie-react-native';
+
 import {
   getDate,
   getseriesTime,
@@ -247,6 +249,16 @@ export default function Home() {
     }
   };
 
+  const ticketDataFilter = (ticketArray) => {
+    const response = ticketArray.filter((element) => element.isLock === false);
+    return response;
+  };
+
+  const cartTicketFilter = (cartArray) => {
+    const response = cartArray.filter((element) => element.series !== null);
+    return response;
+  };
+
   const Ticket_card = ({ item }) => {
     return (
       <View
@@ -344,7 +356,7 @@ export default function Home() {
                     letterSpacing: 0.7,
                   }}
                 >
-                  See All Tickets
+                  Choice Your Number
                 </Text>
               </TouchableOpacity>
               {/* FFAA33 */}
@@ -691,9 +703,9 @@ console.log("--------------")
               </Text>
             </Text>
 
-            {allSeries.length != 0 ? (
+            {ticketDataFilter(allSeries).length != 0 ? (
               <View>
-                {allSeries.map((item, index) => (
+                {ticketDataFilter(allSeries).map((item, index) => (
                   <View key={index}>
                     <Ticket_card item={item} />
                   </View>
@@ -723,121 +735,180 @@ console.log("--------------")
             </Text>
 
             {myOrderList.length > 0 ? (
-              <View
+             <>
+                {myOrderList.map((item, index) => (
+                  <Fragment key={index}>
+                     <View
                 style={{
                   padding: Normalize(5),
                   borderRadius: Normalize(8),
                   backgroundColor: Colors.lightpurple,
                   elevation: Normalize(2),
                   borderRadius: Normalize(8),
+                  marginBottom:Normalize(10)
                 }}
               >
-                {myOrderList.map((item, index) => (
-                  <View key={index} style={{ marginBottom: Normalize(6) }}>
-                    <Text
-                      onPress={() => console.log(item)}
-                      numberOfLines={1}
-                      style={{
-                        fontSize: Normalize(11.5),
-                        color: Colors.blue,
-                        fontFamily: 'Outfit-Medium',
-                        marginBottom: Normalize(6),
-                      }}
-                    >
-                      Ticket of {getDate(item.createdAt)}
-                    </Text>
-                    <View
-                      style={{
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {isTicket(item.cartTicket) &&
-                        item.cartTicket.map(
-                          (childitem, childindex) =>
-                            childitem.series != null && (
-                              <TouchableOpacity
-                                onPress={() => console.log(childitem)}
-                                key={childindex}
-                                style={{
-                                  // height: Normalize(24),
-                                  paddingVertical: Normalize(5),
-                                  width: '48%',
-                                  backgroundColor: whichColorShade(
-                                    childitem.series.timeSlot.time
-                                  ),
-
-                                  borderRadius: Normalize(5),
-                                  elevation: Normalize(1),
-                                  marginBottom: Normalize(8),
-                                  justifyContent: 'center',
-                                  // alignItems: 'center',
-                                  paddingHorizontal: Normalize(6),
-                                }}
-                              >
-                                <Text
-                                  numberOfLines={1}
-                                  style={[
-                                    globalStyles.planeText_outfit_Medium,
-                                    {
-                                      color: Colors.purple2,
-                                      fontSize: Normalize(10),
-                                    },
-                                  ]}
-                                >
-                                  Ticket no :{' '}
-                                  <Text
+                    {cartTicketFilter(item.cartTicket).length > 0 ? (
+                      <View  style={{ marginBottom: Normalize(6) }}>
+                        <Text
+                          onPress={() => console.log(item)}
+                          numberOfLines={1}
+                          style={{
+                            fontSize: Normalize(11.5),
+                            color: Colors.blue,
+                            fontFamily: 'Outfit-Medium',
+                            marginBottom: Normalize(6),
+                          }}
+                        >
+                          Ticket of {getDate(item.createdAt)}
+                        </Text>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {isTicket(item.cartTicket) &&
+                            item.cartTicket.map(
+                              (childitem, childindex) =>
+                                childitem.series != null && (
+                                  <TouchableOpacity
+                                    onPress={() => console.log(childitem)}
+                                    key={childindex}
                                     style={{
-                                      fontSize: Normalize(11),
-                                      fontFamily: 'Outfit-SemiBold',
-                                      color: Colors.purple,
+                                      // height: Normalize(24),
+                                      paddingVertical: Normalize(5),
+                                      width: '48%',
+                                      backgroundColor: whichColorShade(
+                                        childitem.series.timeSlot.time
+                                      ),
+
+                                      borderRadius: Normalize(5),
+                                      elevation: Normalize(1),
+                                      marginBottom: Normalize(8),
+                                      justifyContent: 'center',
+                                      // alignItems: 'center',
+                                      paddingHorizontal: Normalize(6),
                                     }}
                                   >
-                                    {childitem.ticketNumber}
-                                  </Text>
-                                </Text>
-                                <Text
-                                  numberOfLines={1}
-                                  style={[
-                                    globalStyles.planeText_outfit_Medium,
-                                    {
-                                      color: Colors.purple2,
-                                      fontSize: Normalize(10),
-                                      paddingVertical: Normalize(2),
-                                    },
-                                  ]}
-                                >
-                                  {childitem.series.timeSlot.time},{' '}
-                                  {childitem.series.series} ticket
-                                </Text>
-                                <Text
-                                  numberOfLines={1}
-                                  style={[
-                                    globalStyles.planeText_outfit_Medium,
-                                    {
-                                      color: Colors.green,
-                                      fontSize: Normalize(8),
-                                      textAlign: 'right',
-                                      fontFamily: 'Outfit-Medium',
-                                    },
-                                  ]}
-                                >
-                                  Price : {few_constants.rupee}{' '}
-                                  <Text
-                                    style={{ fontFamily: 'Outfit-SemiBold' }}
-                                  >
-                                    {childitem.series.price}
-                                  </Text>
-                                </Text>
-                              </TouchableOpacity>
-                            )
-                        )}
+                                    <Text
+                                      numberOfLines={1}
+                                      style={[
+                                        globalStyles.planeText_outfit_Medium,
+                                        {
+                                          color: Colors.purple2,
+                                          fontSize: Normalize(10),
+                                        },
+                                      ]}
+                                    >
+                                      Ticket no :{' '}
+                                      <Text
+                                        style={{
+                                          fontSize: Normalize(11),
+                                          fontFamily: 'Outfit-SemiBold',
+                                          color: Colors.purple,
+                                        }}
+                                      >
+                                        {childitem.ticketNumber}
+                                      </Text>
+                                    </Text>
+                                    <Text
+                                      numberOfLines={1}
+                                      style={[
+                                        globalStyles.planeText_outfit_Medium,
+                                        {
+                                          color: Colors.purple2,
+                                          fontSize: Normalize(10),
+                                          paddingVertical: Normalize(2),
+                                        },
+                                      ]}
+                                    >
+                                      {childitem.series.timeSlot.time},{' '}
+                                      {childitem.series.series} ticket
+                                    </Text>
+                                    <Text
+                                      numberOfLines={1}
+                                      style={[
+                                        globalStyles.planeText_outfit_Medium,
+                                        {
+                                          color: Colors.green,
+                                          fontSize: Normalize(8),
+                                          textAlign: 'right',
+                                          fontFamily: 'Outfit-Medium',
+                                        },
+                                      ]}
+                                    >
+                                      Price : {few_constants.rupee}{' '}
+                                      <Text
+                                        style={{
+                                          fontFamily: 'Outfit-SemiBold',
+                                        }}
+                                      >
+                                        {childitem.series.price}
+                                      </Text>
+                                    </Text>
+                                  </TouchableOpacity>
+                                )
+                            )}
+                        </View>
+                      </View>
+                    ) : (
+                      <Fragment>
+                        <View style={{flex:1,flexDirection:'row',}}>
+                        <Text
+                          onPress={() => console.log(item)}
+                          numberOfLines={1}
+                          style={{
+                            fontSize: Normalize(11.5),
+                            color: Colors.blue,
+                            fontFamily: 'Outfit-Medium',
+                            marginBottom: Normalize(6),
+                          }}
+                        >
+                          Ticket of {getDate(item.createdAt)}
+                        </Text>
+                        {/* <View
+                          style={{
+                            height: '100%',
+                            width: '100%',
+                            position: 'absolute',
+                            // justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Text
+                            style={[
+                              globalStyles.planeText_outfit_bold,
+                              { color: Colors.red, fontSize: Normalize(13) },
+                            ]}
+                          >
+                            You don't have any Order !
+                          </Text>
+                          <Text
+                            style={[
+                              globalStyles.planeText_outfit_bold,
+                              { color: Colors.blue, fontSize: Normalize(10) },
+                            ]}
+                          >
+                            Please buy a ticket
+                          </Text>
+                        </View> */}
+                        <Lottie
+                          source={require('../../../../assets/animation/67812-empty-box-animation.json')}
+                          autoPlay
+                          loop
+                          style={{ width: 60 }}
+                        />
+                        </View>
+                        
+                      </Fragment>
+                    )}
                     </View>
-                  </View>
+                  </Fragment>
                 ))}
-              </View>
+                </>
             ) : (
               <EmptyScreen />
             )}
