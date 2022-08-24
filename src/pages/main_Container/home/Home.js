@@ -724,9 +724,9 @@ export default function Home() {
                 }}
               >
                 {myOrderList.map((item, index) => (
-                  <Fragment>
+                  <Fragment key={index}>
                     {cartTicketFilter(item.cartTicket).length > 0 ? (
-                      <View key={index} style={{ marginBottom: Normalize(6) }}>
+                      <View  style={{ marginBottom: Normalize(6) }}>
                         <Text
                           onPress={() => console.log(item)}
                           numberOfLines={1}
