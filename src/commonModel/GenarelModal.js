@@ -3,38 +3,46 @@ import Lottie from 'lottie-react-native';
 import React, { useState } from 'react';
 import { Normalize } from '../constant/for_responsive/Dimens';
 
-const GenaralModel = ({ modelOpen, onRequestClose,Content,animationFile,buttonDisable,color }) => {
+const GenaralModel = ({
+  modelOpen,
+  onRequestClose,
+  Content,
+  animationFile,
+  buttonDisable,
+  color,
+}) => {
   // const [modalVisible, setModalVisible] = useState(true);
   return (
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modelOpen}
-        onRequestClose={onRequestClose}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Lottie
-              style={{ height: 200 }}
-              source={animationFile}
-              autoPlay
-              loop
-            />
-            <Text style={[styles.modalText,{color:color}]}>
-              {Content}
-            </Text>
-            {
-                !buttonDisable && <Pressable
-                style={[styles.button, styles.buttonClose,{backgroundColor:color}]}
-                onPress={onRequestClose}
-              >
-                <Text style={styles.textStyle}>Back</Text>
-              </Pressable>
-            }
-            
-          </View>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={modelOpen}
+      onRequestClose={onRequestClose}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Lottie
+            style={{ height: 200 }}
+            source={animationFile}
+            autoPlay
+            loop
+          />
+          <Text style={[styles.modalText, { color: color }]}>{Content}</Text>
+          {!buttonDisable && (
+            <Pressable
+              style={[
+                styles.button,
+                styles.buttonClose,
+                { backgroundColor: color },
+              ]}
+              onPress={onRequestClose}
+            >
+              <Text style={styles.textStyle}>Back</Text>
+            </Pressable>
+          )}
         </View>
-      </Modal>
+      </View>
+    </Modal>
   );
 };
 
@@ -74,15 +82,15 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: 'white',
-    fontWeight: 'bold',
     textAlign: 'center',
+    fontSize: Normalize(13),
+    fontFamily: 'Outfit-SemiBold',
   },
   modalText: {
-    marginBottom: 15,
-    fontSize:Normalize(18),
+    marginBottom: Normalize(10),
+    fontSize: Normalize(15),
     textAlign: 'center',
-    // color: '#2196F3',
-    fontWeight: 'bold',
+    fontFamily: 'Outfit-Medium',
   },
 });
 

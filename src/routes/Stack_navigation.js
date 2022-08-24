@@ -9,6 +9,7 @@ import AllTickets_Page from '../pages/main_Container/home/AllTickets_Page';
 import { getAsync } from '../helper/asyncstorage/AsyncStoragePage';
 import IntroPage from '../pages/intro_Container/IntroPage';
 import Result from '../pages/main_Container/home/Result';
+import AboutUs from '../pages/main_Container/more/AboutUs';
 export default function Stack_navigation() {
   const Stack = createNativeStackNavigator();
   const checkisLogin = async () => {
@@ -29,6 +30,7 @@ export default function Stack_navigation() {
         <Stack.Screen name="tabBar" component={Tab_navigation} />
         <Stack.Screen name="AllTickets_Page" component={AllTickets_Page} />
         <Stack.Screen name="Result" component={Result} />
+        <Stack.Screen name="AboutUs" component={AboutUs} />
       </Stack.Navigator>
     </NavigationContainer>
   );

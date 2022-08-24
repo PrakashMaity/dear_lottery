@@ -2,6 +2,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import Lottie from 'lottie-react-native';
 
 import React from 'react';
+import { globalStyles } from '../../constant/StylePage';
+import { Colors } from '../../constant/Colors';
+import { Normalize } from '../../constant/for_responsive/Dimens';
 
 const EmptyScreen = () => {
   return (
@@ -16,10 +19,11 @@ const EmptyScreen = () => {
       <Lottie
         source={require('../../../assets/animation/emptylist.json')}
         autoPlay
+
         loop
         style={{ width: 100 }}
       />
-      <Text>No data Present</Text>
+      <Text style={[globalStyles.planeText_outfit_Medium,{color:Colors.grey,marginTop:Normalize(8)}]}>No data Present</Text>
     </View>
   );
 };

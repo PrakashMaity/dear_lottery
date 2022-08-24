@@ -42,8 +42,13 @@ import ServerErrorModel from '../../../commonModel/ServerErrorModel';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 
 export default function Home() {
-  const { setUserDetails, themeColor, userAllDetails, setUserAllDetails } =
-    useContext(myContext);
+  const {
+    userDetails,
+    setUserDetails,
+    themeColor,
+    userAllDetails,
+    setUserAllDetails,
+  } = useContext(myContext);
 
   const navigation = useNavigation();
   const [allSeries, SetAllSeries] = useState([]);
@@ -541,6 +546,9 @@ export default function Home() {
     );
   };
   const getAllSeries = async (val) => {
+
+console.log("--------------")
+
     setLoader(val != undefined ? true : false);
     const res = await getAxios(baseUrlWithEndPoint.home.getAllSeries);
     // console.log(res.data.data)
@@ -579,10 +587,11 @@ export default function Home() {
   };
   useEffect(() => {
     getAsyncStorageDetails();
-    getAllSeries('withLoader');
-    getMybookingList('withLoader');
+    // getAllSeries('withLoader');
+    // getMybookingList('withLoader');
   }, []);
   const getMybookingList = async (val) => {
+    console.log("******************")
     setLoader(val != undefined ? true : false);
 
     const userDetails = await AsyncStorage.getItem('userDetails');
@@ -624,6 +633,18 @@ export default function Home() {
       return true;
     }
   };
+
+  const reloadOnComeBack = () => {
+    getAllSeries();
+    getMybookingList();
+  };
+
+  useEffect(() => {
+    const willFocusSubscription = navigation.addListener('focus', () => {
+      reloadOnComeBack();
+    });
+    return willFocusSubscription;
+  }, [userDetails]);
 
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>

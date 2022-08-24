@@ -8,8 +8,11 @@ import { Colors } from '../../../constant/Colors'
 import { BlueShades, PurpleShades } from '../../../helper/colorChange/ColorsObject'
 import { setAsync } from '../../../helper/asyncstorage/AsyncStoragePage'
 import { myContext } from '../../../helper/context/ContextPage'
+import { useNavigation } from '@react-navigation/native'
 
 export default function More() {
+const navigation=useNavigation()
+
   const { themeColor, setThemeColor } = useContext(myContext)
   const [selectColorModal, setSelectColorModal] = useState(false)
 
@@ -25,7 +28,7 @@ export default function More() {
     {
       title: "About us",
       isComingSoon: false,
-      navigateTo: () => { }
+      navigateTo: () => {navigation.navigate("AboutUs") }
     },
     {
       title: "Share The app",
