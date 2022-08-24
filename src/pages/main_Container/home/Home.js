@@ -714,17 +714,19 @@ export default function Home() {
             </Text>
 
             {myOrderList.length > 0 ? (
-              <View
+             <>
+                {myOrderList.map((item, index) => (
+                  <Fragment key={index}>
+                     <View
                 style={{
                   padding: Normalize(5),
                   borderRadius: Normalize(8),
                   backgroundColor: Colors.lightpurple,
                   elevation: Normalize(2),
                   borderRadius: Normalize(8),
+                  marginBottom:Normalize(10)
                 }}
               >
-                {myOrderList.map((item, index) => (
-                  <Fragment key={index}>
                     {cartTicketFilter(item.cartTicket).length > 0 ? (
                       <View  style={{ marginBottom: Normalize(6) }}>
                         <Text
@@ -833,8 +835,20 @@ export default function Home() {
                       </View>
                     ) : (
                       <Fragment>
-                        <View style={{flex:1,flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-                        <View
+                        <View style={{flex:1,flexDirection:'row',}}>
+                        <Text
+                          onPress={() => console.log(item)}
+                          numberOfLines={1}
+                          style={{
+                            fontSize: Normalize(11.5),
+                            color: Colors.blue,
+                            fontFamily: 'Outfit-Medium',
+                            marginBottom: Normalize(6),
+                          }}
+                        >
+                          Ticket of {getDate(item.createdAt)}
+                        </Text>
+                        {/* <View
                           style={{
                             height: '100%',
                             width: '100%',
@@ -859,20 +873,21 @@ export default function Home() {
                           >
                             Please buy a ticket
                           </Text>
-                        </View>
+                        </View> */}
                         <Lottie
                           source={require('../../../../assets/animation/67812-empty-box-animation.json')}
                           autoPlay
                           loop
-                          style={{ width: 150 }}
+                          style={{ width: 60 }}
                         />
                         </View>
                         
                       </Fragment>
                     )}
+                    </View>
                   </Fragment>
                 ))}
-              </View>
+                </>
             ) : (
               <EmptyScreen />
             )}
