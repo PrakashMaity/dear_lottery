@@ -331,11 +331,11 @@ export default function Home() {
               <TouchableOpacity
                 disabled={item.isLock}
                 onPress={() => {
-                  console.log(item)
-                  // navigation.navigate('AllTickets_Page', {
-                  //   id: item._id,
-                  //   header: `${item.series} Ticktes`,
-                  // });
+                  // console.log(item)
+                  navigation.navigate('AllTickets_Page', {
+                    id: item._id,
+                    header: `${item.series} Ticktes`,
+                  });
                 }}
                 style={{
                   height: '75%',
