@@ -18,6 +18,7 @@ import CustomBottom from '../../../helper/CustomBottom';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Zocial from 'react-native-vector-icons/Zocial';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { images } from '../../../constant/Images';
@@ -200,6 +201,22 @@ export default function Profile() {
             </View>
           </View>
 
+          {/* Address */}
+          <View style={styles.eachBox}>
+            <View style={styles.eachIconBox}>
+              <MaterialIcons
+                name={'location-on'}
+                color={Colors.purple}
+                size={Normalize(27)}
+              />
+            </View>
+            <View style={styles.eachTextBox}>
+              <Text numberOfLines={1} style={styles.eachText}>
+                Adress not added
+              </Text>
+            </View>
+          </View>
+
           {/* bank details */}
 
           <View style={styles.eachBox}>
@@ -262,10 +279,9 @@ export default function Profile() {
           style={{ width: '70%', marginTop: Normalize(40) }}
           name={'Edit Profile'}
         />
-        {editModal && <EditProfile
-        visible={editModal}
-        onpress={onpressEditModal}
-        />}
+        {editModal && (
+          <EditProfile visible={editModal} onpress={onpressEditModal} />
+        )}
       </View>
     </View>
   );

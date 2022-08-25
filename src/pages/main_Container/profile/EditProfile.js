@@ -154,7 +154,7 @@ export default function EditProfile({ visible, onpress }) {
 
               <CustomBottom
                 loader={loader}
-                name={'Submit'}
+                name={'Update'}
                 onPress={onpressRegister}
               />
             </View>
