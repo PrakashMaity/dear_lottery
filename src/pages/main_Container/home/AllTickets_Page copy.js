@@ -36,15 +36,88 @@ import { myContext } from '../../../helper/context/ContextPage';
 import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 import { patchAxios } from '../../../services/patchData';
+import GenaralModel from '../../../commonModel/GenarelModal';
+import { getDate } from '../../../helper/TimeRelatedFunc';
+import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 export default function AllTickets_Page({ route }) {
   const { userDetails } = useContext(myContext);
   const { id, header } = route.params;
   const [all_tickets, setAll_tickets] = useState([]);
   const [seriesData, setSeriesData] = useState('');
   const [price, setPrice] = useState('');
+  const [seriesDetails, setSeriesDetails] = useState({
+    seriesName: '',
+    price: '',
+    time: '',
+    date: '',
+  });
   const [seriesId, setSeriesId] = useState('');
   const [refreshing, SetRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
+  const userdata = JSON.parse(userDetails);
+
+  const [paymentStateModal, setPaymentStateModal] = useState(false);
+  const [paymentStage, setPaymentStage] = useState('no payment');
+  const [paymentStageData, setpaymentStageData] = useState({
+    content: '',
+    lottie: '',
+    buttonDisable: false,
+    color: 'red',
+  });
+
+  useEffect(() => {
+    switch (paymentStage) {
+      case 'no payment':
+        setpaymentStageData({
+          content:
+            'Your payment not done , if your Money deduce then we will refund !',
+          lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
+          buttonDisable: false,
+          color: 'red',
+        });
+        break;
+      case 'payment brrow':
+        setpaymentStageData({
+          content: 'Payment Pre-processing ...',
+          lottie: require('../../../../assets/animation/start-payment.json'),
+          buttonDisable: true,
+          color: 'blue',
+        });
+        break;
+      case 'payment after success':
+        setpaymentStageData({
+          content: 'Payment done ,wait for a miniuts...',
+          lottie: require('../../../../assets/animation/paymentstart.json'),
+          buttonDisable: true,
+          color: 'blue',
+        });
+      case 'payment Done':
+        setpaymentStageData({
+          content: 'Congatulation , Your payment Successfully done !',
+          lottie: require('../../../../assets/animation/paymentcomplete.json'),
+          buttonDisable: false,
+          color: 'green',
+        });
+        break;
+      case 'payment not Done':
+        setpaymentStageData({
+          content:
+            'Your payment not done , if your Money deduce then we will refund !',
+          lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
+          buttonDisable: false,
+          color: 'red',
+        });
+        break;
+      default:
+        setpaymentStageData({
+          content:
+            'Your payment not done , if your Money deduce then we will refund !',
+          lottie: require('../../../../assets/animation/payment-unsuccessful.json'),
+          buttonDisable: false,
+          color: 'red',
+        });
+    }
+  }, [paymentStage]);
 
   const isSeleted_ticket = (val) => {
     if (val.isAlreadyBuy) {
@@ -80,66 +153,67 @@ export default function AllTickets_Page({ route }) {
     });
     return total;
   };
-  const getSeriesData = async () => {
-    setLoader(true);
+  const getSeriesData = async (val) => {
+    setLoader(val != undefined ? true : false);
     const data = {
       params: {
         seriesId: id,
       },
     };
-
     const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
 
-    // console.log(res.data.data._id);
-
     if (res.success) {
+      // console.log(res.data.data);
+
       setSeriesId(res.data.data._id);
-      let newarr = [];
+      var newarr = [];
       res.data.data.numberList.map((item) => {
         item.isSelected = false;
-        // console.log(item)
         newarr.push(item);
+      });
+      setSeriesDetails({
+        seriesName: res.data.data.series.series,
+        price: res.data.data.series.price,
+        time: res.data.data.time,
+        date: res.data.data.createdAt,
       });
       setAll_tickets(newarr);
       setPrice(res.data.data.price);
     } else {
+      console.log('-----------', res.message);
     }
     setLoader(false);
   };
 
-  
-
   useEffect(() => {
-    getSeriesData();
+    getSeriesData('withloader');
   }, [id]);
 
-  const onPress_buy_old = async () => {
-    const userdata = JSON.parse(userDetails);
+  const onPress_buy = async () => {
+    // let userdata = JSON.parse(userDetails);
     const ticketArrayData = ticketDataMapper();
-    // console.log('ticketArrayData ', ticketArrayData);
-
     const dataPayload = {
       ticketData: ticketArrayData,
       ticketBuyer: userdata.userId,
     };
-    console.log('userdata', userdata);
-
     const resSendData = await axiosPatch(
       `payment/ticket_borrow?ticketTableId=${seriesId}`,
       dataPayload
     );
-    console.log('Ticket borrow :', resSendData);
+    setPaymentStateModal(true);
+    setPaymentStage('payment brrow');
     if (!resSendData) {
       console.log('resSendData :', resSendData);
       Toast.show('Somethink went wrong');
+      // setPaymentStage('payment not Done')
     }
 
     const data = {
       amount: '100',
       name: userdata.name,
-      email: userdata.email,
-      // phone: userdata.phoneNo,
-      phone: '9733492348',
+      email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
+      phone: userdata.phoneNo,
+      // phone: '9733492348',
     };
     const result = razerPayGetter(data);
     RazorpayCheckout.open(result)
@@ -148,22 +222,29 @@ export default function AllTickets_Page({ route }) {
         if (data.razorpay_payment_id) {
           Toast.show('Payment Sucessfull');
           after_payment(data.razorpay_payment_id, resSendData);
+          setPaymentStateModal(true);
+          setPaymentStage('payment after success');
           // console.log("razorpay_payment_id-------------", data.razorpay_payment_id)
           let cart_iniciator = [];
 
           resSendData.data.forEach((element) => {
             cart_iniciator.push({
-              ticketNumber: element._id,
-              series: seriesId,
+              ticketNumber: element.ticketNumber,
+              series: id,
             });
           });
           console.log('cart_iniciator @@@@', cart_iniciator);
           api_update_AddToCart(cart_iniciator);
+          // setPaymentStateModal(true);
+          setTimeout(() => {
+            setPaymentStage('payment Done');
+          }, 2500);
         }
       })
       .catch((error) => {
         console.log('resSendData @@@@', resSendData);
-
+        setPaymentStateModal(true);
+        setPaymentStage('payment not Done');
         // console.log("Error:", error);
         borrow_remove_handler(resSendData);
         if (error.error) {
@@ -176,8 +257,14 @@ export default function AllTickets_Page({ route }) {
         // console.log("ticket_in_cart----", ticket_in_cart);
       });
   };
-  const onPress_buy = async () => {
-    const userdata = JSON.parse(userDetails);
+  const dataSendToRazerPay = {
+    amount: '100',
+    name: userdata.name,
+    email: userdata.email,
+    // phone: userdata.phoneNo,
+    phone: '9733492348',
+  };
+  const onPress_buy_new = async () => {
     const ticketArrayData = ticketDataMapper();
     // console.log('ticketArrayData ', ticketArrayData);
 
@@ -185,23 +272,23 @@ export default function AllTickets_Page({ route }) {
       ticketData: ticketArrayData,
       ticketBuyer: userdata.userId,
     };
-    const res = await patchAxios(
+    const borrowResponse = await patchAxios(
       baseUrlWithEndPoint.home.ticket_borrow + seriesId,
       dataPayload
     );
+    if (borrowResponse.success) {
+      console.log('Ticket borrow :', borrowResponse.data.data);
 
-    if (res.success) {
-      console.log('Ticket borrow :', res.data.data);
+      const result = razerPayGetter(dataSendToRazerPay);
     } else {
     }
-    
   };
 
   const api_update_AddToCart = async (data) => {
     try {
-      const userdata = JSON.parse(userDetails);
       const dataPayload = {
         cartTicket: data,
+        amount: calculateAmount(),
       };
       const res = await modifiedAxiosPatch(
         `cart/cart_update?userId=${userdata.userId}`,
@@ -222,7 +309,6 @@ export default function AllTickets_Page({ route }) {
     console.log('res scscnscnsck 122sdv1 ----', res);
   };
   const ticketDataMapper = () => {
-    const userdata = JSON.parse(userDetails);
     const selectedArr = [];
     all_tickets.map((item, index) => {
       if (item.isSelected) {
@@ -230,6 +316,7 @@ export default function AllTickets_Page({ route }) {
           _id: item._id,
           isAlreadyBuy: true,
           userId: userdata.userId,
+          ticketNumber: item.ticketNumber,
         });
       }
     });
@@ -250,12 +337,12 @@ export default function AllTickets_Page({ route }) {
 
   const after_payment = async (razerpayId, resSendData) => {
     // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
-    const userdata = JSON.parse(userDetails);
     const ticketArrayData = resSendData;
     const dataPayload = {
       ticketData: ticketArrayData.data,
       razerpay: razerpayId,
       ticketBuyer: userdata.userId,
+      amount: calculateAmount(),
     };
     //  paymentHandler(dataPayload, seriesId);
     const res = await axiosPatch(
@@ -268,34 +355,13 @@ export default function AllTickets_Page({ route }) {
     } else {
       console.log(res);
       Toast.show(res.massage);
-      getSeriesData_withoutLoader();
-    }
-  };
-
-  const getSeriesData_withoutLoader = async () => {
-    const data = {
-      params: {
-        seriesId: id,
-      },
-    };
-
-    const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
-    if (res.success) {
-      setSeriesId(res.data.data._id);
-      var newarr = [];
-      res.data.data.numberList.map((item) => {
-        item.isSelected = false;
-        newarr.push(item);
-      });
-      setAll_tickets(newarr);
-      setPrice(res.data.data.price);
-    } else {
+      getSeriesData();
     }
   };
   const onRefresh = () => {
     SetRefreshing(true);
     Toast.show('Refreshing...');
-    getSeriesData_withoutLoader();
+    getSeriesData();
     SetRefreshing(false);
   };
 
@@ -306,10 +372,36 @@ export default function AllTickets_Page({ route }) {
     }
   };
 
+  const calculateAmount = (val) => {
+    let a = countTIcket() * price * 100;
+    return a.toString();
+  };
+  // console.log(seriesDetails)
+
+  const whichImage = (val) => {
+    switch (val) {
+      case '1 PM':
+        return images.ticketGreen;
+      case '8 PM':
+        return images.ticketViolet;
+      default:
+        return images.ticket;
+    }
+  };
+
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
-      <Custom_header back title={header} />
-
+      <Custom_header back title={'Tickets'} />
+      <GenaralModel
+        Content={paymentStageData.content}
+        modelOpen={paymentStateModal}
+        animationFile={paymentStageData.lottie}
+        onRequestClose={() => {
+          setPaymentStateModal(false);
+        }}
+        buttonDisable={paymentStageData.buttonDisable}
+        color={paymentStageData.color}
+      />
       {loader ? (
         <LoaderPage />
       ) : (
@@ -346,14 +438,13 @@ export default function AllTickets_Page({ route }) {
                       borderRadius: Normalize(10),
                       backgroundColor: Colors.lightpurple,
                       overflow: 'hidden',
-                      elevation: 0.8,
+                      elevation: 0.8,justifyContent:"center",alignItems:"center"
                     }}
                   >
                     <Image
-                      source={images.ticket}
+                      source={whichImage(seriesDetails.time)}
                       style={{
-                        height: '100%',
-                        width: '100%',
+                        height: '75%', width: '75%',
                         resizeMode: 'contain',
                       }}
                     />
@@ -373,7 +464,7 @@ export default function AllTickets_Page({ route }) {
                           color: Colors.blue,
                         }}
                       >
-                        5 Series Ticktes
+                        {seriesDetails.seriesName} Ticktes
                       </Text>
                       <Text
                         style={{
@@ -384,14 +475,14 @@ export default function AllTickets_Page({ route }) {
                           letterSpacing: 0.5,
                         }}
                       >
-                        Closing Time :{' '}
+                        Draw Time :{' '}
                         <Text
                           style={{
                             fontFamily: 'Outfit-SemiBold',
                             fontSize: Normalize(11.5),
                           }}
                         >
-                          15 pm
+                          {seriesDetails.time}
                         </Text>
                       </Text>
                     </View>
@@ -430,30 +521,41 @@ export default function AllTickets_Page({ route }) {
               {/* tickets numbers */}
               <Text style={[globalStyles.topicHeading]}>Ticket Number :</Text>
 
-              <View
-                style={{
-                  flexWrap: 'wrap',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                {all_tickets.map((item, index) => (
-                  <TouchableOpacity
-                    onPress={() => onpress_ticketNum(item)}
-                    disabled={item.isAlreadyBuy}
-                    key={index}
-                    style={isSeleted_ticket(item)[0]}
-                  >
-                    <Text numberOfLines={1} style={isSeleted_ticket(item)[1]}>
-                      {item.ticketNumber}
-                    </Text>
-                    {item.isAlreadyBuy && (
-                      <Text style={styles.sold_out_text}>Sold out</Text>
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </View>
+              {all_tickets.length >= 1 ? (
+                <View
+                  style={{
+                    flexWrap: 'wrap',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  {all_tickets.map((item, index) => (
+                    <TouchableOpacity
+                      onPress={() => onpress_ticketNum(item)}
+                      disabled={item.isAlreadyBuy}
+                      key={index}
+                      style={isSeleted_ticket(item)[0]}
+                    >
+                      <Text numberOfLines={1} style={isSeleted_ticket(item)[1]}>
+                        {item.ticketNumber}
+                      </Text>
+                      {item.isAlreadyBuy && (
+                        <Text style={styles.sold_out_text}>Sold out</Text>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    marginTop: Normalize(50),
+                  }}
+                >
+                  <EmptyScreen />
+                </View>
+              )}
             </ScrollView>
           </View>
           {/* Buy now  section */}

@@ -311,7 +311,7 @@ export default function Home() {
                 letterSpacing: 0.5,
               }}
             >
-              Draw Time :{' '}
+              Draw Time -{' '}
               <Text
                 style={{
                   fontFamily: 'Outfit-SemiBold',
@@ -330,12 +330,13 @@ export default function Home() {
             >
               <TouchableOpacity
                 disabled={item.isLock}
-                onPress={() =>
-                  navigation.navigate('AllTickets_Page', {
-                    id: item._id,
-                    header: `${item.series} Ticktes`,
-                  })
-                }
+                onPress={() => {
+                  console.log(item)
+                  // navigation.navigate('AllTickets_Page', {
+                  //   id: item._id,
+                  //   header: `${item.series} Ticktes`,
+                  // });
+                }}
                 style={{
                   height: '75%',
                   width: '80%',
@@ -403,7 +404,9 @@ export default function Home() {
               fontSize: Normalize(7),
             }}
           >
-            <Text style={{ letterSpacing: 0.5 }}>{getDate(item.date)}</Text>
+            <Text style={{ letterSpacing: 0.5 }}>
+              {getDate(item.startTime)}
+            </Text>
           </Text>
         </View>
         {item.isLock && (
@@ -836,32 +839,59 @@ export default function Home() {
                                         style={[
                                           globalStyles.planeText_outfit_Medium,
                                           {
-                                            color: Colors.purple2,
+                                            color: Colors.white,
                                             fontSize: Normalize(10),
                                             paddingVertical: Normalize(2),
                                           },
                                         ]}
                                       >
-                                        {childitem.series.timeSlot.time},{' '}
                                         {childitem.series.series} ticket
                                       </Text>
 
                                       <View
                                         style={{
                                           height: Normalize(18),
-                                          alignItems: 'flex-end',
+                                          justifyContent: 'space-between',
+                                          flexDirection: 'row',
                                         }}
                                       >
                                         <View
                                           style={{
                                             padding: Normalize(5),
                                             backgroundColor: Colors.purple,
-                                            elevation:Normalize(1),
+                                            elevation: Normalize(1),
+                                            height: '100%',
+                                            width: '25%',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderRadius: Normalize(3),
+                                          }}
+                                        >
+                                          <Text
+                                            numberOfLines={1}
+                                            style={[
+                                              globalStyles.planeText_outfit_Medium,
+                                              {
+                                                color: Colors.white,
+                                                fontSize: Normalize(8),
+                                                fontFamily: 'Outfit-Medium',
+                                              },
+                                            ]}
+                                          >
+                                            {childitem.series.timeSlot.time}
+                                          </Text>
+                                        </View>
+
+                                        <View
+                                          style={{
+                                            padding: Normalize(5),
+                                            backgroundColor: Colors.purple,
+                                            elevation: Normalize(1),
                                             height: '100%',
                                             width: '35%',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                            borderRadius:Normalize(3)
+                                            borderRadius: Normalize(3),
                                           }}
                                         >
                                           <Text
@@ -900,32 +930,6 @@ export default function Home() {
                             >
                               Ticket of {getDate(item.createdAt)}
                             </Text>
-                            {/* <View
-                          style={{
-                            height: '100%',
-                            width: '100%',
-                            position: 'absolute',
-                            // justifyContent: 'center',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text
-                            style={[
-                              globalStyles.planeText_outfit_bold,
-                              { color: Colors.red, fontSize: Normalize(13) },
-                            ]}
-                          >
-                            You don't have any Order !
-                          </Text>
-                          <Text
-                            style={[
-                              globalStyles.planeText_outfit_bold,
-                              { color: Colors.blue, fontSize: Normalize(10) },
-                            ]}
-                          >
-                            Please buy a ticket
-                          </Text>
-                        </View> */}
                             <Lottie
                               source={require('../../../../assets/animation/67812-empty-box-animation.json')}
                               autoPlay

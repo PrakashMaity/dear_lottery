@@ -475,7 +475,7 @@ export default function AllTickets_Page({ route }) {
                           letterSpacing: 0.5,
                         }}
                       >
-                        Draw Time :{' '}
+                        Draw Time -{' '}
                         <Text
                           style={{
                             fontFamily: 'Outfit-SemiBold',
