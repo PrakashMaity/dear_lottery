@@ -388,7 +388,7 @@ export default function Home() {
         </View>
         <View
           style={{
-            backgroundColor: Colors.yellow,
+            backgroundColor: Colors.blue,
             padding: Normalize(3),
             position: 'absolute',
             top: Normalize(3),
@@ -715,12 +715,7 @@ export default function Home() {
                 { color: Colors.purple },
               ]}
             >
-              Recent Ticktes{' '}
-              <Text
-                style={{ fontSize: Normalize(10), fontFamily: 'Outfit-Medium' }}
-              >
-                ( {todayDate()} | {whichDay()} )
-              </Text>
+              Recent Ticktes
             </Text>
 
             {ticketDataFilter(allSeries).length != 0 ? (
@@ -839,9 +834,10 @@ export default function Home() {
                                         style={[
                                           globalStyles.planeText_outfit_Medium,
                                           {
-                                            color: Colors.white,
+                                            color: Colors.purple,
                                             fontSize: Normalize(10),
-                                            paddingVertical: Normalize(2),
+                                            paddingTop: Normalize(2),
+                                            paddingBottom: Normalize(5),
                                           },
                                         ]}
                                       >
