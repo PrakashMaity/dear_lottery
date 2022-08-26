@@ -335,7 +335,7 @@ export default function Home() {
                 disabled={item.isLock}
                 onPress={() => {
                   // console.log(item)
-                  navigation.navigate('AllTickets_Page', {
+                  navigation.navigate('TicketPurchase', {
                     id: item._id,
                     header: `${item.series} Ticktes`,
                   });
@@ -861,9 +861,22 @@ export default function Home() {
                                           },
                                         ]}
                                       >
-                                        {childitem.series.series} ticket
+                                        {childitem.series.series} <Text style={{fontSize:Normalize(7),}}> ({getDate(childitem.series.startTime)})</Text>
                                       </Text>
-
+                                      {/* <Text
+                                        numberOfLines={1}
+                                        style={[
+                                          globalStyles.planeText_outfit_Medium,
+                                          {
+                                            color: Colors.purple,
+                                            fontSize: Normalize(7),
+                                            // paddingTop: Normalize(2),
+                                            paddingBottom: Normalize(5),
+                                          },
+                                        ]}
+                                      >
+                                        {getDate(childitem.series.startTime)}
+                                      </Text> */}
                                       <View
                                         style={{
                                           height: Normalize(18),
