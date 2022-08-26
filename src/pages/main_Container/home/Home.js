@@ -837,13 +837,26 @@ export default function Home() {
                                             color: Colors.purple,
                                             fontSize: Normalize(10),
                                             paddingTop: Normalize(2),
-                                            paddingBottom: Normalize(5),
+                                            // paddingBottom: Normalize(5),
                                           },
                                         ]}
                                       >
                                         {childitem.series.series} ticket
                                       </Text>
-
+                                      <Text
+                                        numberOfLines={1}
+                                        style={[
+                                          globalStyles.planeText_outfit_Medium,
+                                          {
+                                            color: Colors.red,
+                                            fontSize: Normalize(10),
+                                            // paddingTop: Normalize(2),
+                                            paddingBottom: Normalize(5),
+                                          },
+                                        ]}
+                                      >
+                                        {getDate(childitem.series.startTime)}
+                                      </Text>
                                       <View
                                         style={{
                                           height: Normalize(18),
