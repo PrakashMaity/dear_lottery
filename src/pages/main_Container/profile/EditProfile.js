@@ -10,22 +10,83 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { globalStyles } from '../../../constant/StylePage';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { Colors } from '../../../constant/Colors';
 import CustomBottom from '../../../helper/CustomBottom';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { few_constants } from '../../../constant/small_constant/Few_Constants';
+import { myContext } from '../../../helper/context/ContextPage';
+import { phoneNumber_check } from '../../../helper/validation/Validation';
+import Toast from 'react-native-simple-toast';
+import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
+import { patchAxios } from '../../../services/patchData';
 export default function EditProfile({ visible, onpress }) {
+  const { accountDetails, setAccountDetails, userID } = useContext(myContext);
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [loader, setLoader] = useState(false);
 
+  const setData = () => {
+    setName(accountDetails.name);
+    setPhone(accountDetails.phone);
+    setEmail(accountDetails.email);
+    // console.log(accountDetails.address);
+    if (accountDetails.address != undefined || accountDetails.address != null) {
+      setAddress(accountDetails.name);
+    }
+  };
+
+  useEffect(() => {
+    setData();
+  }, []);
+
   const onpressRegister = () => {
-    onpress();
+    // onpress();
+    const EmailVerify = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (name == '' && name.trim('') == '') {
+      Toast.show('Enter your name');
+    } else {
+      if (!phoneNumber_check(phone)[0]) {
+        Toast.show(phoneNumber_check(phone)[1]);
+      } else {
+        if (email.length > 0) {
+          if (!EmailVerify.test(email)) {
+            Toast.show('Enter your valid email address');
+          } else {
+            updateFunc();
+          }
+        } else {
+          updateFunc();
+        }
+      }
+    }
+
+    // console.log(accountDetails.address);
+  };
+
+  const updateFunc = async () => {
+    const data = {
+      name: name,
+      email: email,
+      phone: phone,
+      address: address,
+    };
+
+    const res = await patchAxios(
+      baseUrlWithEndPoint.profile.updateProfile + userID,
+      data
+    );
+
+    console.log(res);
+    if (res.success) {
+      Toast.show(res.data.massage);
+      onpress();
+    }
   };
 
   return (
@@ -132,7 +193,7 @@ export default function EditProfile({ visible, onpress }) {
                   borderRadius: Normalize(8),
                   borderWidth: Normalize(1.5),
                   borderColor: Colors.lightpurple,
-                  paddingHorizontal: Normalize(15),
+                  paddingHorizontal: Normalize(12),
                 }}
               >
                 <TextInput

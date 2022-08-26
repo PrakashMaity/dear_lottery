@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { globalStyles } from '../../constant/StylePage';
@@ -21,8 +21,11 @@ import { axiosPost } from '../../http/axios/CustomAxiosCall';
 import { postAxios } from '../../services/postData';
 import { baseUrlWithEndPoint } from '../../services/BaseUrl/baseUrl';
 import { getFcmToken } from '../../services/FcmToken/getFcmToken';
+import { myContext } from '../../helper/context/ContextPage';
 
 export default function Signup() {
+  const { userID, setUserID } = useContext(myContext);
+
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -137,7 +140,7 @@ export default function Signup() {
       phoneNo: res.data.phone,
       email: res.data.email,
     };
-
+    setUserID(res.data._id)
     // console.log(userData)
     const jsonValue = JSON.stringify(userData);
     await AsyncStorage.setItem('userDetails', jsonValue);

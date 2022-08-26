@@ -11,11 +11,15 @@ export const baseUrlWithEndPoint = {
     getAllTickets: baseUrl + 'ticket/ticket_list_get',
     getAllBookingTickets: baseUrl + 'cart/get_data?userId=',
     ticket_borrow: baseUrl + 'payment/ticket_borrow?ticketTableId=',
+    userDetails: baseUrl + 'users/getuser?userId=',
   },
   notice: {
     notice: baseUrl + 'notice/notice_get_all',
   },
   winner: {
     winner: baseUrl + 'winner/winner_get_all',
+  },
+  profile: {
+    updateProfile:baseUrl+'users/updateUser?userId='
   },
 };

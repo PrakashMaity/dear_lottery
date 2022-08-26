@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { globalStyles } from '../../constant/StylePage';
 import { Normalize } from '../../constant/for_responsive/Dimens';
 import { Colors } from '../../constant/Colors';
@@ -18,7 +18,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFcmToken } from '../../services/FcmToken/getFcmToken';
 import { baseUrlWithEndPoint } from '../../services/BaseUrl/baseUrl';
 import { postAxios } from '../../services/postData.js';
+import { myContext } from '../../helper/context/ContextPage';
 export default function Login() {
+  const { userID, setUserID } = useContext(myContext);
   const navigation = useNavigation();
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
@@ -96,6 +98,7 @@ export default function Login() {
       phoneNo: res.data.phone,
       email: res.data.email,
     };
+    setUserID(res.data._id)
     const jsonValue = JSON.stringify(userData);
     await AsyncStorage.setItem('userDetails', jsonValue);
     await AsyncStorage.setItem('token', res.token);

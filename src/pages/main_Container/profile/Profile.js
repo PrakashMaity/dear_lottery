@@ -8,7 +8,7 @@ import {
   Linking,
   Modal,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { globalStyles } from '../../../constant/StylePage';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { Colors } from '../../../constant/Colors';
@@ -23,25 +23,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { images } from '../../../constant/Images';
 import EditProfile from './EditProfile';
+import { myContext } from '../../../helper/context/ContextPage';
+import { getAxios } from '../../../services/getData';
+import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 export default function Profile() {
   const navigation = useNavigation();
+
+  const { accountDetails, setAccountDetails, userID } = useContext(myContext);
+
   const [userDetails, setUserDetails] = useState('');
   const [editModal, setEditModal] = useState(false);
 
   const onpressEditModal = () => {
     setEditModal(!editModal);
   };
-
   const getUserDetails = async () => {
-    var data = {};
-    const res = await AsyncStorage.getItem('userDetails');
-    data = JSON.parse(res);
-    setUserDetails(data);
+    if (userID != '') {
+      const res = await getAxios(baseUrlWithEndPoint.home.userDetails + userID);
+      // console.log(res.data.data);
+      if (res.success) {
+        setAccountDetails(res.data.data);
+      }
+    }
   };
 
   useEffect(() => {
     getUserDetails();
-  }, []);
+  }, [editModal]);
 
   const logoutFunc = async () => {
     // const fcmtoken = await AsyncStorage.getItem('fcmtoken')
@@ -114,7 +122,7 @@ export default function Profile() {
             { paddingTop: Normalize(5) },
           ]}
         >
-          {userDetails.name}
+          {accountDetails.name}
         </Text>
         <Text
           style={[
@@ -166,7 +174,7 @@ export default function Profile() {
             </View>
             <View style={styles.eachTextBox}>
               <Text numberOfLines={1} style={styles.eachText}>
-                {userDetails.name}
+                {accountDetails.name}
               </Text>
             </View>
           </View>
@@ -180,7 +188,7 @@ export default function Profile() {
               />
             </View>
             <View style={[styles.eachTextBox, { flex: 4.7 }]}>
-              <Text style={styles.eachText}>+91 {userDetails.phoneNo}</Text>
+              <Text style={styles.eachText}>+91 {accountDetails.phone}</Text>
             </View>
           </View>
           {/* email */}
@@ -194,8 +202,8 @@ export default function Profile() {
             </View>
             <View style={styles.eachTextBox}>
               <Text numberOfLines={1} style={styles.eachText}>
-                {userDetails.email != ''
-                  ? userDetails.email
+                {accountDetails.email != ''
+                  ? accountDetails.email
                   : 'Email not added'}
               </Text>
             </View>
@@ -212,7 +220,7 @@ export default function Profile() {
             </View>
             <View style={styles.eachTextBox}>
               <Text numberOfLines={1} style={styles.eachText}>
-                Adress not added
+                { (accountDetails.address!=undefined||accountDetails.address!=null)?accountDetails.address: "Address not added"}
               </Text>
             </View>
           </View>

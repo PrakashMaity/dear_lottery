@@ -45,11 +45,14 @@ import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 
 export default function Home() {
   const {
+    userID,
     userDetails,
     setUserDetails,
     themeColor,
     userAllDetails,
     setUserAllDetails,
+    accountDetails,
+    setAccountDetails,
   } = useContext(myContext);
 
   const navigation = useNavigation();
@@ -620,31 +623,36 @@ export default function Home() {
     // console.log("token----", token)
     // console.log("theme----", theme, "async--------", themeColor)
   };
+
+  const getUserDetails = async () => {
+    if (userID != '') {
+      const res = await getAxios(baseUrlWithEndPoint.home.userDetails + userID);
+      // console.log(res.data.data);
+      if (res.success) {
+        setAccountDetails(res.data.data);
+      }
+    }
+  };
   useEffect(() => {
     getAsyncStorageDetails();
   }, []);
+
+  useEffect(() => {
+    withLoader();
+  }, [userID]);
+
   const getMybookingList = async (val) => {
-    // console.log("******************")
+    // console.log('******************', userID);
     setLoader(val != undefined ? true : false);
-
-    const userDetails = await AsyncStorage.getItem('userDetails');
-    var a = JSON.parse(userDetails);
-
     const res = await getAxios(
-      baseUrlWithEndPoint.home.getAllBookingTickets + a.userId
+      baseUrlWithEndPoint.home.getAllBookingTickets + userID
     );
-    // console.log('++++------+++++', res);
+    // console.log('++++------+++++', res.success);
     if (res.success) {
-      // console.log(res.data.data.length);
-      // res.data.data.map((item, index) => {
-      //   console.log(index, '-----', item);
-      // });
-
       SetMyOrderList(res.data.data);
-
       setLoader(false);
     } else {
-      console.log(res.status);
+      console.log('getMybookingList---', res.status);
       setLoader(false);
     }
     setLoader(false);
@@ -652,8 +660,7 @@ export default function Home() {
   const onRefresh = () => {
     SetRefreshing(true);
     Toast.show('Refreshing...');
-    getAllSeries();
-    getMybookingList();
+    reloadOnComeBack();
     SetRefreshing(false);
   };
 
@@ -665,10 +672,23 @@ export default function Home() {
       return true;
     }
   };
-
   const reloadOnComeBack = () => {
-    getAllSeries();
-    getMybookingList();
+    if (userID != '') {
+      getAllSeries();
+      getMybookingList();
+      getUserDetails();
+    }else {
+      console.log('empty id -2  ');
+    }
+  };
+  const withLoader = () => {
+    if (userID != '') {
+      getAllSeries('withLoader');
+      getMybookingList('withLoader');
+      getUserDetails();
+    } else {
+      console.log('empty id ');
+    }
   };
 
   useEffect(() => {
@@ -676,7 +696,7 @@ export default function Home() {
       reloadOnComeBack();
     });
     return willFocusSubscription;
-  }, [userDetails]);
+  }, [userID]);
 
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
