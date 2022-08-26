@@ -1,12 +1,10 @@
 import {
   View,
   Text,
-  StatusBar,
   Image,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
@@ -14,48 +12,37 @@ import { globalStyles } from '../../../constant/StylePage';
 import { Normalize } from '../../../constant/for_responsive/Dimens';
 import { Colors } from '../../../constant/Colors';
 import { few_constants } from '../../../constant/small_constant/Few_Constants';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import RazorpayCheckout from 'react-native-razorpay';
-
+import Lottie from 'lottie-react-native';
 import { images } from '../../../constant/Images';
 import { addComma } from '../../../helper/AddComma';
-import { useNavigation } from '@react-navigation/native';
 import Custom_header from '../../../helper/Custom_header';
-import { allNumbers } from '../../../helper/DemoData';
 import Toast from 'react-native-simple-toast';
 import {
-  axiosGet,
   axiosPatch,
   modifiedAxiosPatch,
 } from '../../../http/axios/CustomAxiosCall';
-import axios from 'axios';
 import LoaderPage from '../../../helper/components/LoaderPage';
 import { razerPay, razerPayGetter } from '../../../helper/paymentHelper';
-import { paymentHandler } from '../../../http/services';
 import { myContext } from '../../../helper/context/ContextPage';
 import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
-import { patchAxios } from '../../../services/patchData';
 import GenaralModel from '../../../commonModel/GenarelModal';
-import { getDate } from '../../../helper/TimeRelatedFunc';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
-export default function AllTickets_Page({ route }) {
+import ServerErrorModel from '../../../commonModel/ServerErrorModel';
+import NotFoundModel from '../../../commonModel/NotFoundModel';
+
+export default function TicketPurchase({ route }) {
   const { userDetails } = useContext(myContext);
   const { id, header } = route.params;
   const [all_tickets, setAll_tickets] = useState([]);
-  const [seriesData, setSeriesData] = useState('');
   const [price, setPrice] = useState('');
-  const [seriesDetails, setSeriesDetails] = useState({
-    seriesName: '',
-    price: '',
-    time: '',
-    date: '',
-  });
-  const [seriesId, setSeriesId] = useState('');
+  const [serverErrorModal, setServerErrorModal] = useState(false);
+  const [notFoundModal, setNotFoundModal] = useState(false);
+  const [ticketTableId, setTicketTableId] = useState('');
   const [refreshing, SetRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
   const userdata = JSON.parse(userDetails);
-
   const [paymentStateModal, setPaymentStateModal] = useState(false);
   const [paymentStage, setPaymentStage] = useState('no payment');
   const [paymentStageData, setpaymentStageData] = useState({
@@ -64,7 +51,287 @@ export default function AllTickets_Page({ route }) {
     buttonDisable: false,
     color: 'red',
   });
+  const [seriesDetails, setSeriesDetails] = useState({
+    seriesName: '',
+    price: '',
+    time: '',
+    date: '',
+  });
+  const ServerErrorModalOpen = () => {
+    setServerErrorModal(true);
+  };
+  const ServerErrorModalClose = () => {
+    setServerErrorModal(false);
+  };
+  const NotFoundModalOpen = () => {
+    setNotFoundModal(true);
+  };
+  const NotFoundModalClose = () => {
+    setNotFoundModal(false);
+  };
 
+  const TicketSelectLogic = (valueArguments) => {
+    if (valueArguments.isAlreadyBuy) {
+      return [styles.sold_Ticket_box, styles.sold_Ticket_num];
+    } else {
+      if (valueArguments.isSelected) {
+        return [styles.selected_Ticket_box, styles.selected_Ticket_num];
+      } else {
+        return [styles.unSelected_Ticket_box, styles.unSelected_Ticket_num];
+      }
+    }
+  };
+  const TicketSelectHandler = (valueArguments) => {
+    let prev_arr = all_tickets;
+    let new_arr = [];
+
+    prev_arr.map((item, index) => {
+      if (valueArguments._id == item._id) {
+        (item.isSelected = !item.isSelected), new_arr.push(item);
+      } else {
+        new_arr.push(item);
+      }
+    });
+    setAll_tickets(new_arr);
+  };
+
+  const countTIcket = () => {
+    let arr = all_tickets;
+    let total = 0;
+    arr.map((item) => {
+      if (item.isSelected) {
+        ++total;
+      }
+    });
+    return total;
+  };
+  const GetAllTicketDetails = async (valueArguments) => {
+    setLoader(valueArguments != undefined ? true : false);
+    const data = {
+      params: {
+        seriesId: id,
+      },
+    };
+
+    const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
+    if (res.success) {
+      setTicketTableId(res.data.data._id);
+      const newarr = [];
+      res.data.data.numberList.map((item) => {
+        item.isSelected = false;
+        newarr.push(item);
+      });
+      setSeriesDetails({
+        seriesName: res.data.data.series.series,
+        price: res.data.data.series.price,
+        time: res.data.data.time,
+        date: res.data.data.createdAt,
+      });
+      setAll_tickets(newarr);
+      setPrice(res.data.data.price);
+    } else {
+      setLoader(false);
+      if (res.status === 500) return ServerErrorModalOpen();
+      return NotFoundModalOpen();
+    }
+    setLoader(false);
+  };
+
+  const TicketBuyHandler = async () => {
+    const ticketArrayData = ticketDataMapper();
+    const dataPayload = {
+      ticketData: ticketArrayData,
+      ticketBuyer: userdata.userId,
+    };
+    const resSendData = await modifiedAxiosPatch(
+      `payment/ticket_borrow?ticketTableId=${ticketTableId}`,
+      dataPayload
+    );
+
+    if (resSendData.success) {
+      setPaymentStateModal(true);
+      setPaymentStage('payment brrow');
+      const totalTicket = resSendData.data.data.length;
+      console.log('totalTicket length', totalTicket);
+      const razerPayData = {
+        amount: (totalTicket * 100).toString(),
+        name: userdata.name,
+        email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
+        phone: userdata.phoneNo,
+      };
+      const result = razerPayGetter(razerPayData);
+      RazorpayCheckout.open(result)
+        .then((Result) => {
+          if (Result.razorpay_payment_id) {
+            OnPaymentSuccess(Result.razorpay_payment_id, resSendData.data);
+
+            let cart_iniciator = [];
+            resSendData.data.data.forEach((element) => {
+              cart_iniciator.push({
+                ticketNumber: element.ticketNumber,
+                series: id,
+              });
+            });
+
+            UserOrderUpdate(cart_iniciator);
+            setTimeout(() => {
+              setPaymentStage('payment Done');
+            }, 2500);
+          }
+        })
+        .catch((error) => {
+          TicketBorrowHandler(resSendData.data);
+          setPaymentStateModal(true);
+          setPaymentStage('payment not Done');
+        });
+    } else {
+      if (resSendData.status === 500) return ServerErrorModalOpen();
+      return NotFoundModalOpen();
+    }
+
+    //old
+
+    // if (!resSendData) {
+    //   Toast.show('Somethink went wrong');
+    // }
+
+    // const razerPayData = {
+    //   amount: '100',
+    //   name: userdata.name,
+    //   email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
+    //   phone: userdata.phoneNo,
+    // };
+    // const result = razerPayGetter(razerPayData);
+    // RazorpayCheckout.open(result)
+    //   .then((data) => {
+    //     if (data.razorpay_payment_id) {
+    //       Toast.show('Payment Sucessfull');
+    //       OnPaymentSuccess(data.razorpay_payment_id, resSendData);
+    //       setPaymentStateModal(true);
+    //       setPaymentStage('payment after success');
+    //       let cart_iniciator = [];
+
+    //       resSendData.data.forEach((element) => {
+    //         cart_iniciator.push({
+    //           ticketNumber: element.ticketNumber,
+    //           series: id,
+    //         });
+    //       });
+    //       UserOrderUpdate(cart_iniciator);
+    //       setTimeout(() => {
+    //         setPaymentStage('payment Done');
+    //       }, 2500);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     setPaymentStateModal(true);
+    //     setPaymentStage('payment not Done');
+    //     TicketBorrowHandler(resSendData);
+    //     if (error.error) {
+    //       if (error.error.reason) {
+    //         Toast.show(error.error.reason);
+    //       }
+    //     }
+    //   });
+  };
+
+  const UserOrderUpdate = async (data) => {
+    const dataPayload = {
+      cartTicket: data,
+      amount: TotalAmoutCalculation(),
+    };
+    const res = await modifiedAxiosPatch(
+      `cart/cart_update?userId=${userdata.userId}`,
+      dataPayload
+    );
+
+    if (res.success) {
+      GetAllTicketDetails();
+    } else {
+      if (resSendData.status === 500) return ServerErrorModalOpen();
+      setPaymentStateModal(true);
+      return setPaymentStage('payment not Done');
+    }
+  };
+
+  const TicketBorrowHandler = async (resSendData) => {
+    const dataPayload = {
+      freshData: resSendData.data,
+      ticketTableId: ticketTableId,
+    };
+    const res = await axiosPatch(`payment/ticket_remove`, dataPayload);
+  };
+  const ticketDataMapper = () => {
+    const selectedArr = [];
+    all_tickets.map((item, index) => {
+      if (item.isSelected) {
+        selectedArr.push({
+          _id: item._id,
+          isAlreadyBuy: true,
+          userId: userdata.userId,
+          ticketNumber: item.ticketNumber,
+        });
+      }
+    });
+    return selectedArr;
+  };
+
+  const OnPaymentSuccess = async (razerpayId, resSendData) => {
+    const ticketArrayData = resSendData;
+    const dataPayload = {
+      ticketData: ticketArrayData.data,
+      razerpay: razerpayId,
+      ticketBuyer: userdata.userId,
+      amount: TotalAmoutCalculation(),
+    };
+
+    const result = await modifiedAxiosPatch(
+      `payment/payment_acc?ticketTableId=${ticketTableId}`,
+      dataPayload
+    );
+    if (result.success) {
+      // GetAllTicketDetails();
+      setPaymentStateModal(true);
+      setPaymentStage('payment after success');
+    } else {
+      if (resSendData.status === 500) return ServerErrorModalOpen();
+      setPaymentStateModal(true);
+      return setPaymentStage('payment not Done');
+    }
+    // //old
+    // if (res.response) {
+    // } else {
+    //   Toast.show(res.massage);
+    //   GetAllTicketDetails();
+    // }
+  };
+
+  const PageRefress = () => {
+    SetRefreshing(true);
+    Toast.show('Refreshing...');
+    GetAllTicketDetails();
+    SetRefreshing(false);
+  };
+
+  const TotalAmoutCalculation = () => {
+    let a = countTIcket() * price * 100;
+    return a.toString();
+  };
+
+  const ImageChangeByTime = (valueArguments) => {
+    switch (valueArguments) {
+      case '1 PM':
+        return images.ticketGreen;
+      case '8 PM':
+        return images.ticketViolet;
+      default:
+        return images.ticket;
+    }
+  };
+
+  useEffect(() => {
+    GetAllTicketDetails('withloader');
+  }, [id]);
   useEffect(() => {
     switch (paymentStage) {
       case 'no payment':
@@ -118,280 +385,17 @@ export default function AllTickets_Page({ route }) {
         });
     }
   }, [paymentStage]);
-
-  const isSeleted_ticket = (val) => {
-    if (val.isAlreadyBuy) {
-      return [styles.sold_Ticket_box, styles.sold_Ticket_num];
-    } else {
-      if (val.isSelected) {
-        return [styles.selected_Ticket_box, styles.selected_Ticket_num];
-      } else {
-        return [styles.unSelected_Ticket_box, styles.unSelected_Ticket_num];
-      }
-    }
-  };
-  const onpress_ticketNum = (val) => {
-    let prev_arr = all_tickets;
-    let new_arr = [];
-
-    prev_arr.map((item, index) => {
-      if (val._id == item._id) {
-        (item.isSelected = !item.isSelected), new_arr.push(item);
-      } else {
-        new_arr.push(item);
-      }
-    });
-    setAll_tickets(new_arr);
-  };
-  const countTIcket = () => {
-    let arr = all_tickets;
-    let total = 0;
-    arr.map((item) => {
-      if (item.isSelected) {
-        ++total;
-      }
-    });
-    return total;
-  };
-  const getSeriesData = async (val) => {
-    setLoader(val != undefined ? true : false);
-    const data = {
-      params: {
-        seriesId: id,
-      },
-    };
-    const res = await getAxios(baseUrlWithEndPoint.home.getAllTickets, data);
-
-    if (res.success) {
-      // console.log(res.data.data);
-
-      setSeriesId(res.data.data._id);
-      var newarr = [];
-      res.data.data.numberList.map((item) => {
-        item.isSelected = false;
-        newarr.push(item);
-      });
-      setSeriesDetails({
-        seriesName: res.data.data.series.series,
-        price: res.data.data.series.price,
-        time: res.data.data.time,
-        date: res.data.data.createdAt,
-      });
-      setAll_tickets(newarr);
-      setPrice(res.data.data.price);
-    } else {
-      console.log('-----------', res.message);
-    }
-    setLoader(false);
-  };
-
-  useEffect(() => {
-    getSeriesData('withloader');
-  }, [id]);
-
-  const onPress_buy = async () => {
-    // let userdata = JSON.parse(userDetails);
-    const ticketArrayData = ticketDataMapper();
-    const dataPayload = {
-      ticketData: ticketArrayData,
-      ticketBuyer: userdata.userId,
-    };
-    const resSendData = await axiosPatch(
-      `payment/ticket_borrow?ticketTableId=${seriesId}`,
-      dataPayload
-    );
-    setPaymentStateModal(true);
-    setPaymentStage('payment brrow');
-    if (!resSendData) {
-      console.log('resSendData :', resSendData);
-      Toast.show('Somethink went wrong');
-      // setPaymentStage('payment not Done')
-    }
-
-    const data = {
-      amount: '100',
-      name: userdata.name,
-      email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
-      phone: userdata.phoneNo,
-      // phone: '9733492348',
-    };
-    const result = razerPayGetter(data);
-    RazorpayCheckout.open(result)
-      .then((data) => {
-        // console.log('Data :::::::-', data)
-        if (data.razorpay_payment_id) {
-          Toast.show('Payment Sucessfull');
-          after_payment(data.razorpay_payment_id, resSendData);
-          setPaymentStateModal(true);
-          setPaymentStage('payment after success');
-          // console.log("razorpay_payment_id-------------", data.razorpay_payment_id)
-          let cart_iniciator = [];
-
-          resSendData.data.forEach((element) => {
-            cart_iniciator.push({
-              ticketNumber: element.ticketNumber,
-              series: id,
-            });
-          });
-          console.log('cart_iniciator @@@@', cart_iniciator);
-          api_update_AddToCart(cart_iniciator);
-          // setPaymentStateModal(true);
-          setTimeout(() => {
-            setPaymentStage('payment Done');
-          }, 2500);
-        }
-      })
-      .catch((error) => {
-        console.log('resSendData @@@@', resSendData);
-        setPaymentStateModal(true);
-        setPaymentStage('payment not Done');
-        // console.log("Error:", error);
-        borrow_remove_handler(resSendData);
-        if (error.error) {
-          if (error.error.reason) {
-            Toast.show(error.error.reason);
-          }
-        }
-
-        // const ticket_in_cart = ticket_add_to_cart(resSendData)
-        // console.log("ticket_in_cart----", ticket_in_cart);
-      });
-  };
-  const dataSendToRazerPay = {
-    amount: '100',
-    name: userdata.name,
-    email: userdata.email,
-    // phone: userdata.phoneNo,
-    phone: '9733492348',
-  };
-  const onPress_buy_new = async () => {
-    const ticketArrayData = ticketDataMapper();
-    // console.log('ticketArrayData ', ticketArrayData);
-
-    const dataPayload = {
-      ticketData: ticketArrayData,
-      ticketBuyer: userdata.userId,
-    };
-    const borrowResponse = await patchAxios(
-      baseUrlWithEndPoint.home.ticket_borrow + seriesId,
-      dataPayload
-    );
-    if (borrowResponse.success) {
-      console.log('Ticket borrow :', borrowResponse.data.data);
-
-      const result = razerPayGetter(dataSendToRazerPay);
-    } else {
-    }
-  };
-
-  const api_update_AddToCart = async (data) => {
-    try {
-      const dataPayload = {
-        cartTicket: data,
-        amount: calculateAmount(),
-      };
-      const res = await modifiedAxiosPatch(
-        `cart/cart_update?userId=${userdata.userId}`,
-        dataPayload
-      );
-    } catch (error) {
-      console.log('api_update_AddToCart----', error);
-    }
-  };
-
-  const borrow_remove_handler = async (resSendData) => {
-    const dataPayload = {
-      freshData: resSendData.data,
-      ticketTableId: seriesId,
-    };
-    //  paymentHandler(dataPayload, seriesId);
-    const res = await axiosPatch(`payment/ticket_remove`, dataPayload);
-    console.log('res scscnscnsck 122sdv1 ----', res);
-  };
-  const ticketDataMapper = () => {
-    const selectedArr = [];
-    all_tickets.map((item, index) => {
-      if (item.isSelected) {
-        selectedArr.push({
-          _id: item._id,
-          isAlreadyBuy: true,
-          userId: userdata.userId,
-          ticketNumber: item.ticketNumber,
-        });
-      }
-    });
-    return selectedArr;
-  };
-  const ticket_add_to_cart = (currentArrayData) => {
-    const selectedArr = [];
-    currentArrayData.map((item, index) => {
-      if (item.isSelected) {
-        selectedArr.push({
-          ticketNumber: item._id,
-          series: seriesId,
-        });
-      }
-    });
-    return selectedArr;
-  };
-
-  const after_payment = async (razerpayId, resSendData) => {
-    // Toast.show(countTIcket() + " * " + `${price} =${countTIcket() * price}  `)
-    const ticketArrayData = resSendData;
-    const dataPayload = {
-      ticketData: ticketArrayData.data,
-      razerpay: razerpayId,
-      ticketBuyer: userdata.userId,
-      amount: calculateAmount(),
-    };
-    //  paymentHandler(dataPayload, seriesId);
-    const res = await axiosPatch(
-      `payment/payment_acc?ticketTableId=${seriesId}`,
-      dataPayload
-    );
-    if (res.response) {
-      // console.log(res.response)
-      console.log(res.response);
-    } else {
-      console.log(res);
-      Toast.show(res.massage);
-      getSeriesData();
-    }
-  };
-  const onRefresh = () => {
-    SetRefreshing(true);
-    Toast.show('Refreshing...');
-    getSeriesData();
-    SetRefreshing(false);
-  };
-
-  const ticketAddToCart = async () => {
-    try {
-    } catch (error) {
-      console.log('ticketAddToCart.......', error);
-    }
-  };
-
-  const calculateAmount = (val) => {
-    let a = countTIcket() * price * 100;
-    return a.toString();
-  };
-  // console.log(seriesDetails)
-
-  const whichImage = (val) => {
-    switch (val) {
-      case '1 PM':
-        return images.ticketGreen;
-      case '8 PM':
-        return images.ticketViolet;
-      default:
-        return images.ticket;
-    }
-  };
-
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Custom_header back title={'Tickets'} />
+      <ServerErrorModel
+        modelOpen={serverErrorModal}
+        onRequestClose={ServerErrorModalClose}
+      />
+      <NotFoundModel
+        modelOpen={notFoundModal}
+        onRequestClose={NotFoundModalClose}
+      />
       <GenaralModel
         Content={paymentStageData.content}
         modelOpen={paymentStateModal}
@@ -403,7 +407,15 @@ export default function AllTickets_Page({ route }) {
         color={paymentStageData.color}
       />
       {loader ? (
-        <LoaderPage />
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Lottie
+            style={{ width: 100 }}
+            source={require('../../../../assets/animation/116489-meta-animation.json')}
+            autoPlay={true}
+          />
+        </View>
       ) : (
         <View style={{ flex: 1 }}>
           <View
@@ -416,7 +428,10 @@ export default function AllTickets_Page({ route }) {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: Normalize(30) }}
               refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                <RefreshControl
+                  refreshing={refreshing}
+                  PageRefress={PageRefress}
+                />
               }
             >
               {/* page details */}
@@ -438,13 +453,16 @@ export default function AllTickets_Page({ route }) {
                       borderRadius: Normalize(10),
                       backgroundColor: Colors.lightpurple,
                       overflow: 'hidden',
-                      elevation: 0.8,justifyContent:"center",alignItems:"center"
+                      elevation: 0.8,
+                      justifyContent: 'center',
+                      alignItems: 'center',
                     }}
                   >
                     <Image
-                      source={whichImage(seriesDetails.time)}
+                      source={ImageChangeByTime(seriesDetails.time)}
                       style={{
-                        height: '75%', width: '75%',
+                        height: '75%',
+                        width: '75%',
                         resizeMode: 'contain',
                       }}
                     />
@@ -475,7 +493,7 @@ export default function AllTickets_Page({ route }) {
                           letterSpacing: 0.5,
                         }}
                       >
-                        Draw Time :{' '}
+                        Draw Time -{' '}
                         <Text
                           style={{
                             fontFamily: 'Outfit-SemiBold',
@@ -532,12 +550,15 @@ export default function AllTickets_Page({ route }) {
                 >
                   {all_tickets.map((item, index) => (
                     <TouchableOpacity
-                      onPress={() => onpress_ticketNum(item)}
+                      onPress={() => TicketSelectHandler(item)}
                       disabled={item.isAlreadyBuy}
                       key={index}
-                      style={isSeleted_ticket(item)[0]}
+                      style={TicketSelectLogic(item)[0]}
                     >
-                      <Text numberOfLines={1} style={isSeleted_ticket(item)[1]}>
+                      <Text
+                        numberOfLines={1}
+                        style={TicketSelectLogic(item)[1]}
+                      >
                         {item.ticketNumber}
                       </Text>
                       {item.isAlreadyBuy && (
@@ -599,7 +620,7 @@ export default function AllTickets_Page({ route }) {
             >
               <TouchableOpacity
                 disabled={countTIcket() > 0 ? false : true}
-                onPress={onPress_buy}
+                onPress={TicketBuyHandler}
                 style={{
                   height: '70%',
                   width: '90%',

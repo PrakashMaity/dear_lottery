@@ -332,7 +332,7 @@ export default function Home() {
                 disabled={item.isLock}
                 onPress={() => {
                   // console.log(item)
-                  navigation.navigate('AllTickets_Page', {
+                  navigation.navigate('TicketPurchase', {
                     id: item._id,
                     header: `${item.series} Ticktes`,
                   });
