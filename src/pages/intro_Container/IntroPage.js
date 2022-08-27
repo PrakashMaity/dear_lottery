@@ -110,7 +110,7 @@ export default function IntroPage() {
           style={{ height: '100%', width: '100%', resizeMode: 'contain' }}
         />
       </View>
-      <Text style={globalStyles.pageHeaderText}>Welcome to Lotty Play</Text>
+      <Text style={globalStyles.pageHeaderText}>Welcome to Gita Lottery</Text>
       <Text
         style={[globalStyles.planeText_outfit_Medium, { color: Colors.blue }]}
       >

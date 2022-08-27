@@ -82,6 +82,11 @@ export default function Winners() {
             {item.series.series} Ticket : {item.ticket_no}
           </Text>
         )}
+        <Text numberOfLines={1} style={styles.textTitle}>
+          <Text style={styles.arrowStyle}>➢ </Text>
+          Draw Time : {item.time}
+        </Text>
+
         <Text style={styles.textTitle}>
           <Text style={styles.arrowStyle}>➢ </Text>Ticket Price :{' '}
           {few_constants.rupee} {addComma(120)}

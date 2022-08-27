@@ -18,15 +18,15 @@ import { Colors } from '../constant/Colors';
 // };
 
 
-
+// https://i.imgur.com/3g7nmJC.png
 export const razerPayGetter = (client_data) => {
   const options = {
-    description: 'Credits towards consultation',
-    image: 'https://i.imgur.com/3g7nmJC.png',
+    description: 'Welcome to Gita lottery',
+    image: 'https://res.cloudinary.com/dxfrfd9n3/image/upload/v1661621067/lottery_fhrht1.png',
     currency: 'INR',
     key: razer_pay_token, // Your api key
     amount: client_data.amount.toString(),
-    name: client_data.name,
+    name:'Gita Lottery',
     prefill: {
       email: client_data.email,
       contact: client_data.phone,

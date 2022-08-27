@@ -37,7 +37,7 @@ export default function EditProfile({ visible, onpress }) {
     setEmail(accountDetails.email);
     // console.log(accountDetails.address);
     if (accountDetails.address != undefined || accountDetails.address != null) {
-      setAddress(accountDetails.name);
+      setAddress(accountDetails.address);
     }
   };
 
