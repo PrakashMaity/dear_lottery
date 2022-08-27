@@ -9,10 +9,10 @@ import { BlueShades, PurpleShades } from '../../../helper/colorChange/ColorsObje
 import { setAsync } from '../../../helper/asyncstorage/AsyncStoragePage'
 import { myContext } from '../../../helper/context/ContextPage'
 import { useNavigation } from '@react-navigation/native'
-
+import Toast from 'react-native-simple-toast';
 export default function More() {
 const navigation=useNavigation()
-
+const appLink="https://apkfab.com/gita-lottery/com.awesomeproject/apk?h=03cb86c162ab6337efc6fa901bb10ab02fc9a087b578993e503b4ef9cd9c602b"
   const { themeColor, setThemeColor } = useContext(myContext)
   const [selectColorModal, setSelectColorModal] = useState(false)
 
@@ -33,7 +33,7 @@ const navigation=useNavigation()
     {
       title: "Share The app",
       isComingSoon: false,
-      func: () => { Linking.openURL("https://apkfab.com/gita-lottery/com.awesomeproject/apk?h=03cb86c162ab6337efc6fa901bb10ab02fc9a087b578993e503b4ef9cd9c602b")}
+      func:()=> shareApp()
     },
     // {
     //   title: "Which Color",
@@ -41,6 +41,18 @@ const navigation=useNavigation()
     //   func: onpressselectColor
     // },
   ]
+
+  const shareApp=async()=>{
+console.log("llllllllll")
+    const isOpen = await Linking.canOpenURL(`whatsapp://send?text=${appLink}`);
+    if (isOpen) {
+      Linking.openURL(`whatsapp://send?text=${appLink}`);
+    } else {
+      Toast.show("Install Whatsapp")
+    }
+  }
+
+
   return (
     <View style={[globalStyles.mainContainer_withoutpadding]} >
       <Custom_header title={"More"} />
