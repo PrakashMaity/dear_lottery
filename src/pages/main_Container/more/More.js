@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Modal, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Modal, TouchableOpacity, Linking } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { globalStyles } from '../../../constant/StylePage'
 import Custom_header from '../../../helper/Custom_header'
@@ -23,22 +23,22 @@ const navigation=useNavigation()
     {
       title: "Setting",
       isComingSoon: true,
-      navigateTo: () => { }
+      func: () => { }
     },
     {
       title: "About us",
       isComingSoon: false,
-      navigateTo: () => {navigation.navigate("AboutUs") }
+      func: () => {navigation.navigate("AboutUs") }
     },
     {
       title: "Share The app",
-      isComingSoon: true,
-      navigateTo: () => { }
+      isComingSoon: false,
+      func: () => { Linking.openURL("https://apkfab.com/gita-lottery/com.awesomeproject/apk?h=03cb86c162ab6337efc6fa901bb10ab02fc9a087b578993e503b4ef9cd9c602b")}
     },
     // {
     //   title: "Which Color",
     //   isComingSoon: false,
-    //   navigateTo: onpressselectColor
+    //   func: onpressselectColor
     // },
   ]
   return (
@@ -49,7 +49,7 @@ const navigation=useNavigation()
           {
             morePageData.map((item, index) => (
               <TouchableOpacity
-                onPress={item.navigateTo}
+                onPress={item.func}
                 key={index} style={{ height: Normalize(50), width: "100%", paddingHorizontal: few_constants.paddingHorizantal, borderBottomColor: Colors.lightpurple2, borderBottomWidth: Normalize(0.5), flexDirection: "row", }} >
                 <View style={{ flex: 1, justifyContent: "center" }} >
                   <Text numberOfLines={1} style={[globalStyles.planeText_outfit_bold, { fontSize: Normalize(14), color: Colors.purple, letterSpacing: 0.5 }]} >{item.title}</Text>
