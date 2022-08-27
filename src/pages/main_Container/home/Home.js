@@ -111,7 +111,7 @@ export default function Home() {
               { width: '70%', letterSpacing: 1 },
             ]}
           >
-            Lotty Play
+              Gita Lottery
           </Text>
         </View>
 
@@ -360,7 +360,7 @@ export default function Home() {
                     letterSpacing: 0.7,
                   }}
                 >
-                  Choice Your Number
+                  Pick your Number
                 </Text>
               </TouchableOpacity>
               {/* FFAA33 */}

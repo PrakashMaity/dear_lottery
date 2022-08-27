@@ -54,31 +54,31 @@ export default function AboutUs() {
               },
             ]}
           >
-            Lotty Play
+            Gita Lottery
           </Text>
         </View>
 
         {/* name */}
         <View style={styles.eachTextBox}>
           <Text style={styles.headerText}>Name :</Text>
-          <Text style={[styles.dataText]}>Ankan Roy</Text>
+          <Text style={[styles.dataText]}>Santanu Barh</Text>
         </View>
 
         {/* phone number */}
         <View style={styles.eachTextBox}>
           <Text style={styles.headerText}>phone No :</Text>
-          <Text style={[styles.dataText]}>+91 1234567890</Text>
+          <Text style={[styles.dataText]}>+91 7908363395</Text>
         </View>
         {/* Email */}
         <View style={styles.eachTextBox}>
           <Text style={styles.headerText}>Email :</Text>
-          <Text style={[styles.dataText]}>abc@gmail.com</Text>
+          <Text style={[styles.dataText]}>santanu_barh@yahoo.in</Text>
         </View>
         {/* address */}
         <View style={styles.eachTextBox}>
           <Text style={styles.headerText}>Address :</Text>
           <Text style={[styles.dataText, { fontSize: Normalize(14.5) }]}>
-            Vill:Sankarara,P.O:Tamluk,Purba Medinipur,West Bengal
+            Durgachokh,Haldia,Purba Medinipur,West Bengal
           </Text>
         </View>
         {/* social media */}

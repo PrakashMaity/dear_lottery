@@ -31,6 +31,7 @@ import GenaralModel from '../../../commonModel/GenarelModal';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
 import ServerErrorModel from '../../../commonModel/ServerErrorModel';
 import NotFoundModel from '../../../commonModel/NotFoundModel';
+import { getDate } from '../../../helper/TimeRelatedFunc';
 
 export default function TicketPurchase({ route }) {
   const { userDetails } = useContext(myContext);
@@ -125,7 +126,7 @@ export default function TicketPurchase({ route }) {
         seriesName: res.data.data.series.series,
         price: res.data.data.series.price,
         time: res.data.data.time,
-        date: res.data.data.createdAt,
+        date: res.data.data.series.startTime,
       });
       setAll_tickets(newarr);
       setPrice(res.data.data.price);
@@ -152,9 +153,8 @@ export default function TicketPurchase({ route }) {
       setPaymentStateModal(true);
       setPaymentStage('payment brrow');
       const totalTicket = resSendData.data.data.length;
-      console.log('totalTicket length', totalTicket);
       const razerPayData = {
-        amount: (totalTicket * 100).toString(),
+        amount: (totalTicket * 100 *price).toString(),
         name: userdata.name,
         email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
         phone: userdata.phoneNo,
@@ -488,7 +488,7 @@ export default function TicketPurchase({ route }) {
                         style={{
                           fontSize: Normalize(11),
                           fontFamily: 'Outfit-Medium',
-                          color: Colors.red,
+                          color: Colors.blue,
                           paddingTop: Normalize(2),
                           letterSpacing: 0.5,
                         }}
@@ -501,6 +501,26 @@ export default function TicketPurchase({ route }) {
                           }}
                         >
                           {seriesDetails.time}
+                        </Text>
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: Normalize(11),
+                          fontFamily: 'Outfit-Medium',
+                          color: Colors.blue,
+                          paddingTop: Normalize(2),
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        Draw Date -{' '}
+                        <Text
+                          style={{
+                            fontFamily: 'Outfit-SemiBold',
+                            fontSize: Normalize(11.5),
+                          }}
+                        >
+                          {getDate(seriesDetails.date)}
                         </Text>
                       </Text>
                     </View>
