@@ -1,4 +1,10 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  RefreshControl,
+} from 'react-native';
 import React, { useEffect, useState, Fragment } from 'react';
 import { globalStyles } from '../../../constant/StylePage';
 import Custom_header from '../../../helper/Custom_header';
@@ -13,14 +19,14 @@ import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 import ServerErrorModel from '../../../commonModel/ServerErrorModel';
 import NotFoundModel from '../../../commonModel/NotFoundModel';
-
+import Toast from 'react-native-simple-toast';
 export default function Winners() {
   const [allWinners, setAllWinners] = useState([]);
   const [loader, setLoader] = useState(false);
 
   const [notfoundModal, SetNotfoundModal] = useState(false);
   const [serverErrorModal, SetServerErrorModal] = useState(false);
-
+  const [refreshing, SetRefreshing] = useState(false);
   const notFoundModalOpenClose = () => {
     SetNotfoundModal(!notfoundModal);
   };
@@ -28,14 +34,14 @@ export default function Winners() {
     SetServerErrorModal(!serverErrorModal);
   };
 
-  const getWinnerResult = async () => {
-    setLoader(true);
+  const getWinnerResult = async (val) => {
+    setLoader(val != undefined ? true : false);
     const res = await getAxios(baseUrlWithEndPoint.winner.winner);
-    // console.log(res.data.data);
     if (res.success) {
       setAllWinners(res.data.data);
     } else {
       setLoader(false);
+      setAllWinners([])
       if (res.status > 399 && res.status < 500) {
         // notFoundModalOpenClose();
       } else if (res.status > 499 && res.status < 600) {
@@ -45,9 +51,14 @@ export default function Winners() {
     setLoader(false);
   };
   useEffect(() => {
-    getWinnerResult();
+    getWinnerResult('withLoader');
   }, []);
-
+  const onRefresh = () => {
+    SetRefreshing(true);
+    Toast.show('Refreshing...');
+    getWinnerResult();
+    SetRefreshing(false);
+  };
   const WinnerCards = ({ item, index }) => {
     return (
       <View
@@ -112,43 +123,45 @@ export default function Winners() {
       {loader ? (
         <LoaderPage />
       ) : (
-        <Fragment>
-          {allWinners.length <= 0 ? (
-            <Fragment>
-              <EmptyScreen />
-            </Fragment>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {allWinners.length > 0 ? (
+            <View
+              style={{
+                flex: 1,
+                paddingHorizontal: few_constants.paddingHorizantal,
+                paddingVertical: Normalize(10),
+              }}
+            >
+              {allWinners.map((item, index) => (
+                <View key={index}>
+                  <WinnerCards item={item} index={index} />
+                </View>
+              ))}
+            </View>
           ) : (
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View
-                style={{
-                  flex: 1,
-                  paddingHorizontal: few_constants.paddingHorizantal,
-                  paddingVertical: Normalize(10),
-                }}
-              >
-                <Fragment>
-                  {allWinners.map((item, index) => (
-                    <View key={index}>
-                      <WinnerCards item={item} index={index} />
-                    </View>
-                  ))}
-                </Fragment>
-              </View>
-              {notfoundModal && (
-                <NotFoundModel
-                  modelOpen={notfoundModal}
-                  onRequestClose={notFoundModalOpenClose}
-                />
-              )}
-              {serverErrorModal && (
-                <ServerErrorModel
-                  modelOpen={serverErrorModal}
-                  onRequestClose={serverErrorModalOpenClose}
-                />
-              )}
-            </ScrollView>
+            <View style={{ marginTop: Normalize(180) }}>
+              <EmptyScreen />
+            </View>
           )}
-        </Fragment>
+          {notfoundModal && (
+            <NotFoundModel
+              modelOpen={notfoundModal}
+              onRequestClose={notFoundModalOpenClose}
+            />
+          )}
+          {serverErrorModal && (
+            <ServerErrorModel
+              modelOpen={serverErrorModal}
+              onRequestClose={serverErrorModalOpenClose}
+            />
+          )}
+        </ScrollView>
       )}
     </View>
   );

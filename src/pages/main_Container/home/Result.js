@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ImageView from 'react-native-image-viewing';
 import { globalStyles } from '../../../constant/StylePage';
@@ -11,17 +18,19 @@ import LoaderPage from '../../../helper/components/LoaderPage';
 import { getAxios } from '../../../services/getData';
 import { baseUrlWithEndPoint } from '../../../services/BaseUrl/baseUrl';
 import EmptyScreen from '../../../components/EmptyScreen/EmptyScreen';
+import Toast from 'react-native-simple-toast';
 export default function Result() {
   const [visible, setIsVisible] = useState(false);
   const [selectImageIdx, setSelectImageIdx] = useState('');
   const [allResult, setAllResult] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [refreshing, SetRefreshing] = useState(false);
   const imagesOnpress = (val) => {
     setSelectImageIdx(val);
     setIsVisible(true);
   };
-  const getWinnerResult = async () => {
-    setLoader(true);
+  const getWinnerResult = async (val) => {
+    setLoader(val != undefined ? true : false);
     const res = await getAxios(baseUrlWithEndPoint.home.result);
     let newArr = [];
     if (res.success) {
@@ -31,19 +40,33 @@ export default function Result() {
       });
       setAllResult(newArr);
     } else {
+      setAllResult([]);
     }
     setLoader(false);
   };
   useEffect(() => {
-    getWinnerResult();
+    getWinnerResult('withLoader');
   }, []);
+
+  const onRefresh = () => {
+    SetRefreshing(true);
+    Toast.show('Refreshing...');
+    getWinnerResult();
+    SetRefreshing(false);
+  };
   return (
     <View style={globalStyles.mainContainer_withoutpadding}>
       <Custom_header back title={'Result'} />
       {loader ? (
         <LoaderPage />
       ) : (
-        <ScrollView>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {allResult.length > 0 ? (
             <View
               style={{
@@ -143,7 +166,7 @@ export default function Result() {
               ))}
             </View>
           ) : (
-            <View style={{marginTop:Normalize(200)}} >
+            <View style={{ marginTop: Normalize(200) }}>
               <EmptyScreen />
             </View>
           )}

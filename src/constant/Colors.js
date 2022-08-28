@@ -12,10 +12,11 @@ export const Colors = {
   green: '#179669',
   red: '#bf0c09',
 
-  // GreenTicketShade: '#a8dcd8',
   GreenTicketShade: '#18d1ae',
-  // violeteTicketShade: '#ddc3f3',
   violeteTicketShade: '#ab91e8',
+
+  colorShade8PM: '#ff6839',
+  colorShade1PM: '#ab91e8',
 
   blue_old: '#16a0d5', //old blue
   blue: '#0e148b', //new blue

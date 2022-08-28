@@ -232,9 +232,9 @@ export default function Home() {
   const whichImage = (val) => {
     switch (val) {
       case '1 PM':
-        return images.ticketGreen;
+        return images.ticket1PM;
       case '8 PM':
-        return images.ticketViolet;
+        return images.ticket8PM;
       default:
         return images.ticket;
     }
@@ -244,11 +244,11 @@ export default function Home() {
     // console.log(val)
     switch (val) {
       case '1 PM':
-        return Colors.GreenTicketShade;
+        return Colors.colorShade1PM;
       case '8 PM':
-        return Colors.violeteTicketShade;
+        return Colors.colorShade8PM;
       default:
-        return images.ticlightpurpleket;
+        return images.lightpurple;
     }
   };
 
@@ -652,7 +652,7 @@ export default function Home() {
       SetMyOrderList(res.data.data);
       setLoader(false);
     } else {
-      console.log('getMybookingList---', res.status);
+      // console.log('getMybookingList---', res.status);
       setLoader(false);
     }
     setLoader(false);

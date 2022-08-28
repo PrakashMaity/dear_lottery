@@ -321,9 +321,9 @@ export default function TicketPurchase({ route }) {
   const ImageChangeByTime = (valueArguments) => {
     switch (valueArguments) {
       case '1 PM':
-        return images.ticketGreen;
+        return images.ticket1PM;
       case '8 PM':
-        return images.ticketViolet;
+        return images.ticket8PM;
       default:
         return images.ticket;
     }
