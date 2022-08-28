@@ -16,7 +16,7 @@ export const Colors = {
   violeteTicketShade: '#ab91e8',
 
   colorShade8PM: '#ff9473',
-  colorShade1PM: '#ab91e8',
+  colorShade1PM: '#18d1ae',
 
   blue_old: '#16a0d5', //old blue
   blue: '#0e148b', //new blue

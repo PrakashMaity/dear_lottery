@@ -775,7 +775,7 @@ export default function Home() {
                   <Fragment key={index}>
                     <View
                       style={{
-                        padding: Normalize(5),
+                        // padding: Normalize(5),
                         borderRadius: Normalize(8),
                         backgroundColor: Colors.lightpurple,
                         elevation: Normalize(2),
@@ -783,8 +783,8 @@ export default function Home() {
                         marginBottom: Normalize(10),
                       }}
                     >
-                      {cartTicketFilter(item.cartTicket).length > 0 ? (
-                        <View style={{ marginBottom: Normalize(6) }}>
+                      {cartTicketFilter(item.cartTicket).length > 0 && (
+                        <View style={{ marginBottom: Normalize(6),padding: Normalize(5) }}>
                           <Text
                             onPress={() => console.log(item)}
                             numberOfLines={1}
@@ -810,14 +810,14 @@ export default function Home() {
                                 (childitem, childindex) =>
                                   childitem.series != null && (
                                     <View
-                                      key={index}
+                                      key={childindex}
                                       // onPress={() => console.log(item)}
                                       style={{
                                         paddingVertical: Normalize(5),
                                         width: '48%',
                                         backgroundColor: Colors.lightpurple,
                                         borderRadius: Normalize(5),
-                                        elevation: Normalize(1),
+                                        elevation: Normalize(2),
                                         marginBottom: Normalize(8),
                                         paddingHorizontal: Normalize(6),
                                         overflow: 'hidden',
@@ -833,7 +833,8 @@ export default function Home() {
                                           fontFamily: 'Outfit-Medium',
                                         }}
                                       >
-                                        {childitem.series.timeSlot.time}
+                                        {childitem.series.series} <Text style={{fontSize:Normalize(7),}}> ({childitem.series.timeSlot.time})</Text>
+                                        {/* {childitem.series.timeSlot.time}
                                         <Text
                                           style={{
                                             fontSize: Normalize(9),
@@ -841,8 +842,24 @@ export default function Home() {
                                           }}
                                         >
                                           , {childitem.series.series}
-                                        </Text>
+                                        </Text> */}
                                       </Text>
+
+                                      <Text
+                                        numberOfLines={1}
+                                        style={[
+                                          globalStyles.planeText_outfit_Medium,
+                                          {
+                                            color: Colors.purple,
+                                            fontSize: Normalize(7),
+                                            paddingTop: Normalize(2),
+                                            paddingBottom: Normalize(5),
+                                          },
+                                        ]}
+                                      >
+                                        {getDate(childitem.series.startTime)}
+                                      </Text>
+
                                       <View
                                         style={{
                                           height: Normalize(18),
@@ -851,9 +868,7 @@ export default function Home() {
                                         <View
                                           style={{
                                             backgroundColor:
-                                              item == 0
-                                                ? Colors.colorShade8PM
-                                                : Colors.colorShade1PM,
+                                            whichColorShade(childitem.series.timeSlot.time),
                                             elevation: Normalize(1),
                                             height: '100%',
                                             width: '100%',
@@ -910,30 +925,7 @@ export default function Home() {
                               )}
                           </View>
                         </View>
-                      ) : (
-                        <Fragment>
-                          <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <Text
-                              onPress={() => console.log(item)}
-                              numberOfLines={1}
-                              style={{
-                                fontSize: Normalize(11.5),
-                                color: Colors.blue,
-                                fontFamily: 'Outfit-Medium',
-                                marginBottom: Normalize(6),
-                              }}
-                            >
-                              Ticket of {getDate(item.createdAt)}
-                            </Text>
-                            <Lottie
-                              source={require('../../../../assets/animation/67812-empty-box-animation.json')}
-                              autoPlay
-                              loop
-                              style={{ width: 60 }}
-                            />
-                          </View>
-                        </Fragment>
-                      )}
+                      ) }
                     </View>
                   </Fragment>
                 ))}
