@@ -251,6 +251,17 @@ export default function Home() {
         return images.lightpurple;
     }
   };
+  const whichColorShadeFade = (val) => {
+   
+    switch (val) {
+      case '1 PM':
+        return '#dbfbf5';
+      case '8 PM':
+        return '#ffe0d7'
+      default:
+        return images.lightpurple;
+    }
+  };
 
   const ticketDataFilter = (ticketArray) => {
     const response = ticketArray.filter((element) => element.isLock === false);
@@ -815,7 +826,7 @@ export default function Home() {
                                       style={{
                                         paddingVertical: Normalize(5),
                                         width: '48%',
-                                        backgroundColor: Colors.lightpurple,
+                                        backgroundColor:whichColorShadeFade(childitem.series.timeSlot.time),
                                         borderRadius: Normalize(5),
                                         elevation: Normalize(2),
                                         marginBottom: Normalize(8),
