@@ -787,34 +787,28 @@ export default function Home() {
                     borderRadius: Normalize(5),
                     elevation: Normalize(1),
                     marginBottom: Normalize(8),
-                    // justifyContent: 'center',
                     paddingHorizontal: Normalize(6),
-                    overflow:"hidden"
+                    overflow: 'hidden',
                   }}
                 >
                   <Text
                     numberOfLines={1}
-                    style={[
-                      globalStyles.planeText_outfit_Medium,
-                      {
-                        color: Colors.purple,
-                        fontSize: Normalize(10),
-                        paddingTop: Normalize(2),
-                        paddingBottom: Normalize(5),
-                      },
-                    ]}
+                    style={{
+                      color: Colors.purple,
+                      fontSize: Normalize(10),
+                      paddingTop: Normalize(2),
+                      paddingBottom: Normalize(5),
+                      fontFamily:"Outfit-Medium"
+                    }}
                   >
                     8 PM
-                    <Text style={{ fontSize: Normalize(10) }}>
-                      {' '}
-                      ,5 series tickets
+                    <Text style={{ fontSize: Normalize(9),fontFamily:"Outfit-Medium" }}>
+                      , 500 Series Ticket
                     </Text>
                   </Text>
                   <View
                     style={{
                       height: Normalize(18),
-                      justifyContent: 'space-between',
-                      flexDirection: 'row',
                     }}
                   >
                     <View
@@ -858,11 +852,20 @@ export default function Home() {
                     style={{
                       padding: Normalize(3),
                       backgroundColor: Colors.blue,
-                      position:"absolute",
-                      right:0
+                      position: 'absolute',
+                      right: 0,
+                      borderBottomLeftRadius: Normalize(5),
                     }}
                   >
-                    <Text style={{fontSize:Normalize(10),color:Colors.white}} >{few_constants.rupee} 1200</Text>
+                    <Text
+                      style={{
+                        fontSize: Normalize(9.5),
+                        color: Colors.white,
+                        fontFamily: 'Outfit-Medium',
+                      }}
+                    >
+                      {few_constants.rupee} 1200
+                    </Text>
                   </View>
                 </TouchableOpacity>
               ))}

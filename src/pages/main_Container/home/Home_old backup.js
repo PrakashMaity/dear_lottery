@@ -111,7 +111,7 @@ export default function Home() {
               { width: '70%', letterSpacing: 1 },
             ]}
           >
-            Gita Lottery
+              Gita Lottery
           </Text>
         </View>
 
@@ -677,7 +677,7 @@ export default function Home() {
       getAllSeries();
       getMybookingList();
       getUserDetails();
-    } else {
+    }else {
       console.log('empty id -2  ');
     }
   };
@@ -809,54 +809,88 @@ export default function Home() {
                               item.cartTicket.map(
                                 (childitem, childindex) =>
                                   childitem.series != null && (
-                                    <View
-                                      key={index}
-                                      // onPress={() => console.log(item)}
+                                    <TouchableOpacity
+                                      onPress={() => console.log(childitem)}
+                                      key={childindex}
                                       style={{
+                                        // height: Normalize(24),
                                         paddingVertical: Normalize(5),
                                         width: '48%',
-                                        backgroundColor: Colors.lightpurple,
+                                        backgroundColor: whichColorShade(
+                                          childitem.series.timeSlot.time
+                                        ),
+
                                         borderRadius: Normalize(5),
                                         elevation: Normalize(1),
                                         marginBottom: Normalize(8),
+                                        justifyContent: 'center',
+                                        // alignItems: 'center',
                                         paddingHorizontal: Normalize(6),
-                                        overflow: 'hidden',
                                       }}
                                     >
                                       <Text
                                         numberOfLines={1}
-                                        style={{
-                                          color: Colors.purple,
-                                          fontSize: Normalize(10),
-                                          paddingTop: Normalize(2),
-                                          paddingBottom: Normalize(5),
-                                          fontFamily: 'Outfit-Medium',
-                                        }}
+                                        style={[
+                                          globalStyles.planeText_outfit_Medium,
+                                          {
+                                            color: Colors.purple2,
+                                            fontSize: Normalize(10),
+                                          },
+                                        ]}
                                       >
-                                        {childitem.series.timeSlot.time}
+                                        Ticket no :{' '}
                                         <Text
                                           style={{
-                                            fontSize: Normalize(9),
-                                            fontFamily: 'Outfit-Medium',
+                                            fontSize: Normalize(11),
+                                            fontFamily: 'Outfit-SemiBold',
+                                            color: Colors.purple,
                                           }}
                                         >
-                                          , {childitem.series.series}
+                                          {childitem.ticketNumber}
                                         </Text>
                                       </Text>
+                                      <Text
+                                        numberOfLines={1}
+                                        style={[
+                                          globalStyles.planeText_outfit_Medium,
+                                          {
+                                            color: Colors.purple,
+                                            fontSize: Normalize(10),
+                                            paddingTop: Normalize(2),
+                                            paddingBottom: Normalize(5),
+                                          },
+                                        ]}
+                                      >
+                                        {childitem.series.series} <Text style={{fontSize:Normalize(7),}}> ({getDate(childitem.series.startTime)})</Text>
+                                      </Text>
+                                      {/* <Text
+                                        numberOfLines={1}
+                                        style={[
+                                          globalStyles.planeText_outfit_Medium,
+                                          {
+                                            color: Colors.purple,
+                                            fontSize: Normalize(7),
+                                            // paddingTop: Normalize(2),
+                                            paddingBottom: Normalize(5),
+                                          },
+                                        ]}
+                                      >
+                                        {getDate(childitem.series.startTime)}
+                                      </Text> */}
                                       <View
                                         style={{
                                           height: Normalize(18),
+                                          justifyContent: 'space-between',
+                                          flexDirection: 'row',
                                         }}
                                       >
                                         <View
                                           style={{
-                                            backgroundColor:
-                                              item == 0
-                                                ? Colors.colorShade8PM
-                                                : Colors.colorShade1PM,
+                                            padding: Normalize(5),
+                                            backgroundColor: Colors.purple,
                                             elevation: Normalize(1),
                                             height: '100%',
-                                            width: '100%',
+                                            width: '25%',
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             borderRadius: Normalize(3),
@@ -868,44 +902,44 @@ export default function Home() {
                                               globalStyles.planeText_outfit_Medium,
                                               {
                                                 color: Colors.white,
-                                                fontSize: Normalize(10),
+                                                fontSize: Normalize(8),
+                                                fontFamily: 'Outfit-Medium',
                                               },
                                             ]}
                                           >
-                                            Ticket no :{' '}
-                                            <Text
-                                              style={{
-                                                fontSize: Normalize(11),
-                                                fontFamily: 'Outfit-Medium',
+                                            {childitem.series.timeSlot.time}
+                                          </Text>
+                                        </View>
+
+                                        <View
+                                          style={{
+                                            padding: Normalize(5),
+                                            backgroundColor: Colors.purple,
+                                            elevation: Normalize(1),
+                                            height: '100%',
+                                            width: '35%',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderRadius: Normalize(3),
+                                          }}
+                                        >
+                                          <Text
+                                            numberOfLines={1}
+                                            style={[
+                                              globalStyles.planeText_outfit_Medium,
+                                              {
                                                 color: Colors.white,
-                                              }}
-                                            >
-                                              {childitem.ticketNumber}
-                                            </Text>
+                                                fontSize: Normalize(8),
+                                                fontFamily: 'Outfit-Medium',
+                                              },
+                                            ]}
+                                          >
+                                            {few_constants.rupee}{' '}
+                                            {childitem.series.price}
                                           </Text>
                                         </View>
                                       </View>
-                                      <View
-                                        style={{
-                                          padding: Normalize(3),
-                                          backgroundColor: Colors.blue,
-                                          position: 'absolute',
-                                          right: 0,
-                                          borderBottomLeftRadius: Normalize(5),
-                                        }}
-                                      >
-                                        <Text
-                                          style={{
-                                            fontSize: Normalize(9.5),
-                                            color: Colors.white,
-                                            fontFamily: 'Outfit-Medium',
-                                          }}
-                                        >
-                                          {few_constants.rupee}{' '}
-                                          {childitem.series.price}
-                                        </Text>
-                                      </View>
-                                    </View>
+                                    </TouchableOpacity>
                                   )
                               )}
                           </View>

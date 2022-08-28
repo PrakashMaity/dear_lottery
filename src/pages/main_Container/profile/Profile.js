@@ -139,7 +139,7 @@ export default function Profile() {
         <TouchableOpacity
           onPress={() =>
             Linking.openURL(
-              'whatsapp://send?text=Hello Gita Lottery ,can we talk now!&phone=+919434205524'
+              'whatsapp://send?text=Hello Gita Lottery ,can we talk now!&phone=+919733745549'
             )
           }
           style={{
