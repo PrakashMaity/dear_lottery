@@ -796,7 +796,7 @@ export default function Home() {
                     >
                       {cartTicketFilter(item.cartTicket).length > 0 && (
                         <View style={{ marginBottom: Normalize(6),padding: Normalize(5) }}>
-                          <Text
+                          {/* <Text
                             onPress={() => console.log(item)}
                             numberOfLines={1}
                             style={{
@@ -807,7 +807,7 @@ export default function Home() {
                             }}
                           >
                             Ticket of {getDate(item.createdAt)}
-                          </Text>
+                          </Text> */}
                           <View
                             style={{
                               flexWrap: 'wrap',
