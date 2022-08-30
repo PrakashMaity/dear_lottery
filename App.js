@@ -7,6 +7,7 @@ import ContextApi from './src/helper/context/ContextPage';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+import * as Sentry from '@sentry/react-native';
 
 const otaUpdateHandler = () => {
   codePush.sync({
@@ -54,6 +55,13 @@ const App = () => {
 
   useEffect(() => {
     otaUpdateHandler();
+  }, []);
+
+  useEffect(() => {
+    Sentry.init({
+      dsn: 'https://2e137d59b27b45dea3d920fca0ac9120@o1384408.ingest.sentry.io/6703340',
+      tracesSampleRate: 1.0,
+    });
   }, []);
 
   console.log('Connection state :-', !isOffline);
@@ -106,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default codePush(codePushOptions)(App);
+export default codePush(codePushOptions)(Sentry.wrap(App));

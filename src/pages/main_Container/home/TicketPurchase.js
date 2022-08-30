@@ -153,8 +153,13 @@ export default function TicketPurchase({ route }) {
       setPaymentStateModal(true);
       setPaymentStage('payment brrow');
       const totalTicket = resSendData.data.data.length;
+      if(totalTicket === 0){
+        return NotFoundModalOpen()
+      }
+
+      const totalAmount = (totalTicket * 100 * price).toString();
       const razerPayData = {
-        amount: (totalTicket * 100 *price).toString(),
+        amount: totalAmount,
         name: userdata.name,
         email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
         phone: userdata.phoneNo,
@@ -163,8 +168,11 @@ export default function TicketPurchase({ route }) {
       RazorpayCheckout.open(result)
         .then((Result) => {
           if (Result.razorpay_payment_id) {
-            OnPaymentSuccess(Result.razorpay_payment_id, resSendData.data);
-
+            OnPaymentSuccess(
+              Result.razorpay_payment_id,
+              resSendData.data,
+              totalAmount
+            );
             let cart_iniciator = [];
             resSendData.data.data.forEach((element) => {
               cart_iniciator.push({
@@ -172,8 +180,7 @@ export default function TicketPurchase({ route }) {
                 series: id,
               });
             });
-
-            UserOrderUpdate(cart_iniciator);
+            UserOrderUpdate(cart_iniciator, totalAmount);
             setTimeout(() => {
               setPaymentStage('payment Done');
             }, 2500);
@@ -188,57 +195,12 @@ export default function TicketPurchase({ route }) {
       if (resSendData.status === 500) return ServerErrorModalOpen();
       return NotFoundModalOpen();
     }
-
-    //old
-
-    // if (!resSendData) {
-    //   Toast.show('Somethink went wrong');
-    // }
-
-    // const razerPayData = {
-    //   amount: '100',
-    //   name: userdata.name,
-    //   email: userdata.email != '' ? userdata.email : 'abc@gmail.com',
-    //   phone: userdata.phoneNo,
-    // };
-    // const result = razerPayGetter(razerPayData);
-    // RazorpayCheckout.open(result)
-    //   .then((data) => {
-    //     if (data.razorpay_payment_id) {
-    //       Toast.show('Payment Sucessfull');
-    //       OnPaymentSuccess(data.razorpay_payment_id, resSendData);
-    //       setPaymentStateModal(true);
-    //       setPaymentStage('payment after success');
-    //       let cart_iniciator = [];
-
-    //       resSendData.data.forEach((element) => {
-    //         cart_iniciator.push({
-    //           ticketNumber: element.ticketNumber,
-    //           series: id,
-    //         });
-    //       });
-    //       UserOrderUpdate(cart_iniciator);
-    //       setTimeout(() => {
-    //         setPaymentStage('payment Done');
-    //       }, 2500);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     setPaymentStateModal(true);
-    //     setPaymentStage('payment not Done');
-    //     TicketBorrowHandler(resSendData);
-    //     if (error.error) {
-    //       if (error.error.reason) {
-    //         Toast.show(error.error.reason);
-    //       }
-    //     }
-    //   });
   };
 
-  const UserOrderUpdate = async (data) => {
+  const UserOrderUpdate = async (data, totalAmount) => {
     const dataPayload = {
       cartTicket: data,
-      amount: TotalAmoutCalculation(),
+      amount: totalAmount,
     };
     const res = await modifiedAxiosPatch(
       `cart/cart_update?userId=${userdata.userId}`,
@@ -276,34 +238,33 @@ export default function TicketPurchase({ route }) {
     return selectedArr;
   };
 
-  const OnPaymentSuccess = async (razerpayId, resSendData) => {
-    const ticketArrayData = resSendData;
-    const dataPayload = {
-      ticketData: ticketArrayData.data,
-      razerpay: razerpayId,
-      ticketBuyer: userdata.userId,
-      amount: TotalAmoutCalculation(),
-    };
+  const OnPaymentSuccess = async (razerpayId, resSendData, totalAmount) => {
+    try {
+      const ticketArrayData = resSendData;
+      const dataPayload = {
+        ticketData: ticketArrayData.data,
+        razerpay: razerpayId,
+        ticketBuyer: userdata.userId,
+        amount: totalAmount,
+      };
 
-    const result = await modifiedAxiosPatch(
-      `payment/payment_acc?ticketTableId=${ticketTableId}`,
-      dataPayload
-    );
-    if (result.success) {
-      // GetAllTicketDetails();
-      setPaymentStateModal(true);
-      setPaymentStage('payment after success');
-    } else {
-      if (resSendData.status === 500) return ServerErrorModalOpen();
+      const result = await modifiedAxiosPatch(
+        `payment/payment_acc?ticketTableId=${ticketTableId}`,
+        dataPayload
+      );
+      if (result.success) {
+        // GetAllTicketDetails();
+        setPaymentStateModal(true);
+        setPaymentStage('payment after success');
+      } else {
+        if (resSendData.status === 500) return ServerErrorModalOpen();
+        setPaymentStateModal(true);
+        return setPaymentStage('payment not Done');
+      }
+    } catch (err) {
       setPaymentStateModal(true);
       return setPaymentStage('payment not Done');
     }
-    // //old
-    // if (res.response) {
-    // } else {
-    //   Toast.show(res.massage);
-    //   GetAllTicketDetails();
-    // }
   };
 
   const PageRefress = () => {
